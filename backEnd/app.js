@@ -3,17 +3,11 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
-const PORT = process.env.PORT || 3000;
-const bodyParser = require('body-parser');
 const app = express();
+const PORT = process.env.PORT || 3000;
 
-// Parse application/x-www-form-urlencoded
-app.use(bodyParser.urlencoded({ extended: false }));
-
-// Parse application/json
-app.use(bodyParser.json());
 // Middleware to parse JSON requests
-app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/', {
@@ -25,12 +19,35 @@ mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mong
 app.get('/', (req, res) => {
   res.send('Hello MongoDB Atlas with Express.js!');
 });
+app.post('/login', async (req, res) => {
+  try {
+    const { username, password } = req.body;
 
+    // Find the user by username
+    const user = await User.findOne({ username });
+    console.log(user)
+    // If the user doesn't exist, return an error
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Compare the entered password with the hashed password in the database
+    const passwordMatch = await bcrypt.compare(password, user.password);
+
+    if (!passwordMatch) { 
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+    res.status(200).json({ user });
+    // res.status(200).json({ message: 'Login successful Welcome ' + user.email});
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Register a new user
 app.post('/register', async (req, res) => {
+  console.log(req.body)
   try {
     const { username, email, password } = req.body;
-    
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -47,9 +64,9 @@ app.post('/register', async (req, res) => {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser); // 201 Created status code
   } catch (error) {
-    console.log(error)
     res.status(500).json({ error: error.message });
   }
+ 
 });
 
 
