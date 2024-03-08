@@ -3,14 +3,20 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
 const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
-const app = express();
 const PORT = process.env.PORT || 3000;
+const bodyParser = require('body-parser');
+const app = express();
 
+// Parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// Parse application/json
+app.use(bodyParser.json());
 // Middleware to parse JSON requests
 app.use(express.json());
 
 // Connect to MongoDB Atlas
-mongoose.connect('mongodb+srv://bossserx:test123456@electronic2life.rlv0qo2.mongodb.net/', {
+mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -24,6 +30,7 @@ app.get('/', (req, res) => {
 app.post('/register', async (req, res) => {
   try {
     const { username, email, password } = req.body;
+    
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
@@ -40,6 +47,7 @@ app.post('/register', async (req, res) => {
     const savedUser = await newUser.save();
     res.status(201).json(savedUser); // 201 Created status code
   } catch (error) {
+    console.log(error)
     res.status(500).json({ error: error.message });
   }
 });

@@ -39,7 +39,7 @@ function HomePage() {
                             <div className=" p-8">
                                 <h1 className="text-[#A98962] text-3xl font-bold mb-4">เราคือใคร?</h1>
 
-                                <p className="text-black text-lg">เราคือเว็บไซต์ที่จะทำให้เครื่องใช้ไฟฟ้าที่ไร้ชีวิตกลับมาอีกครั้ง เพื่อลดขยะอิเล็กทรอนิกส์
+                                <p className="text-black text-lg">เราคือเว็บไซต์ที่จะทำให้เครื่องใช้ไฟฟ้าที่ไร้ชีวิตกลับมาอีกครั้ง <br/>เพื่อลดขยะอิเล็กทรอนิกส์
                                     และ รักษาโลกเราให้น่าอยู่เหมือนเดิม</p>
                             </div>
                         </div>
@@ -54,7 +54,7 @@ function HomePage() {
                             <div className=" p-8">
                                 <h1 className="text-[#A98962] text-3xl font-bold mb-4">ทำอย่างไร?</h1>
 
-                                <p className="text-black text-lg">เราเปิดรับซื้อขยะอิเล็กทรอนิกส์ และนำไปขายต่อในราคาที่ไม่ว่าใครก็สามารถมีเครื่องใช้ไฟฟ้าในบ้านได้</p>
+                                <p className="text-black text-lg">เราเปิดรับซื้อขยะอิเล็กทรอนิกส์ <br/>และนำไปขายต่อในราคาที่ไม่ว่าใครก็สามารถมีเครื่องใช้ไฟฟ้าในบ้านได้</p>
                             </div>
                         </div>
                         <div className="w-1/4 lg:order-last">ƒ
