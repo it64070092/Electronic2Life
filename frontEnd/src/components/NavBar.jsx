@@ -1,35 +1,149 @@
-import { useState } from 'react'
-import '../App.css'
+import React from "react";
+import {
+  Navbar,
+  MobileNav,
+  Typography,
+  Button,
+  IconButton,
+} from "@material-tailwind/react";
 
-function NavBar() {
+export default function NavBar() {
+  const [openNav, setOpenNav] = React.useState(false);
 
-  const [isLogin, setIsLogin] = useState(false)
+  React.useEffect(() => {
+    window.addEventListener(
+      "resize",
+      () => window.innerWidth >= 960 && setOpenNav(false),
+    );
+  }, []);
+
+  const navList = (
+    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+      >
+
+        <a href="#" className="flex items-center">
+          สินค้ามือสอง
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+      >
+
+        <a href="#" className="flex items-center">
+          ติดต่อซ่อม
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+      >
+
+        <a href="#" className="flex items-center">
+          Blocks
+        </a>
+      </Typography>
+      <Typography
+        as="li"
+        variant="small"
+        color="blue-gray"
+        className="flex items-center gap-x-2 p-1 font-medium"
+      >
+
+        <a href="#" className="flex items-center">
+          Docs
+        </a>
+      </Typography>
+    </ul>
+  );
 
   return (
-    <div className='flex flex-row h-24 border-b-2 border-solid border-black'>
-      <div className='flex flex-row w-1/2 pt-5 pl-10 gap-10'>
-        <MdElectricBolt className='h-12 w-12' />
-        <p className='text-2xl font-bold pt-2'>Home</p>
-        <p className='text-2xl font-bold pt-2'>Products</p>
-        <p className='text-2xl font-bold pt-2'>Contracts</p>
-      </div>
-      {isLogin && (
-        <div className='flex flex-row w-1/2 justify-end pt-7 pr-28 gap-10'>
-          <CgProfile className='h-9 w-9' />
-        </div>
-      )}
-      {!isLogin && (
-        <div className='flex flex-row w-1/2 justify-end pt-7 pb-7 pr-28 gap-5'>
-          <button className="bg-black hover:bg-gray-700 w-[14%] text-white font-bold py-1 px-4 rounded-lg">
-            Login
-          </button>
-          <button className="bg-black hover:bg-gray-700 w-[14%] text-white font-bold py-2 px-4 rounded-lg">
-            Sign Up
-          </button>
-        </div>
-      )}
-    </div>
-  )
-}
+    <Navbar className="mx-auto max-w-screen-3xl lg:px-4 lg:py-4 text-black">
+      <div className=" mx-auto px-4 lg:px-0 flex items-center justify-between">
 
-export default NavBar
+        <Typography
+          as="a"
+          href="/"
+          className="mr-4 cursor-pointer py-1.5 font-medium"
+        >
+          Material Tailwind
+        </Typography>
+        <div className="hidden lg:block">{navList}</div>
+        <div className="flex items-center gap-x-1">
+          <Button variant="text" size="sm" className="hidden lg:inline-block">
+
+            <a href="/signup" className="flex items-center">
+              Login
+            </a>
+          </Button>
+          <Button
+            variant="gradient"
+            size="sm"
+            className="hidden lg:inline-block"
+          >
+            <span>Sign in</span>
+          </Button>
+        </div>
+        <IconButton
+          variant="text"
+          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
+          ripple={false}
+          onClick={() => setOpenNav(!openNav)}
+        >
+          {openNav ? (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              className="h-6 w-6"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M6 18L18 6M6 6l12 12"
+              />
+            </svg>
+          ) : (
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth={2}
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                d="M4 6h16M4 12h16M4 18h16"
+              />
+            </svg>
+          )}
+        </IconButton>
+      </div>
+      <MobileNav open={openNav}>
+        <div className="container mx-auto">
+          {navList}
+          <div className="flex items-center gap-x-1">
+            <Button fullWidth variant="text" size="sm" className="">
+              <span>Log In</span>
+            </Button>
+            <Button fullWidth variant="gradient" size="sm" className="">
+              <span>Sign in</span>
+            </Button>
+          </div>
+        </div>
+      </MobileNav>
+    </Navbar>
+  );
+}
