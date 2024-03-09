@@ -35,7 +35,7 @@ import {
 export function ComplexNavbar() {
 
   const user = useSelector(state => state.user);
-  const username = user.user.user.username
+  const username = user.user?.user?.username;
   const isAuthen = user.isAuthenticated;
   const navigate = useNavigate()
   function ProfileMenu() {
