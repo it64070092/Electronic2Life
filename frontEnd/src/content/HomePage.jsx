@@ -1,13 +1,13 @@
 import { useState } from 'react'
 import '../App.css'
-import NavBar from '../components/NavBar';
+import { ComplexNavbar } from '../components/NavBar'
 // import { Button } from "@material-tailwind/react";
 function HomePage() {
 
 
     return (
         <>
-            <NavBar></NavBar>
+           <ComplexNavbar/>
             <section>
                 <div className="bg-[#C1C4B4] py-8 flex flex-col lg:flex-row items-center justify-center">
                     {/* Left side content */}

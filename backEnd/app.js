@@ -5,10 +5,10 @@ const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
 const app = express();
 const PORT = process.env.PORT || 3000;
-
+const cors = require('cors');
 // Middleware to parse JSON requests
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cors())
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/', {
   useNewUrlParser: true,
@@ -28,14 +28,15 @@ app.post('/login', async (req, res) => {
     console.log(user)
     // If the user doesn't exist, return an error
     if (!user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'No User Name',
+    username:username });
     }
 
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 
     if (!passwordMatch) { 
-      return res.status(401).json({ error: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Password Wrong', username:username });
     }
     res.status(200).json({ user });
     // res.status(200).json({ message: 'Login successful Welcome ' + user.email});

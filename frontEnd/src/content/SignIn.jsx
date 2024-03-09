@@ -1,16 +1,48 @@
 import { useState } from 'react'
+import backendip from '../../backendip';
 import '../App.css'
-
+import { useDispatch, useSelector } from 'react-redux';
+import { loginUser } from '../actions/userActions';
+import axios from 'axios';
+import { Alert } from '@material-tailwind/react';
+import { useNavigate } from 'react-router-dom';
 function SignIn() {
+  const user = useSelector(state => state.user);
   const [username, setUsername] = useState('')
   const [password, setPassword] = useState('')
-
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const handleUsernameChange = (event) => {
     setUsername(event.target.value)
   }
 
   const handlePasswordChange = (event) => {
     setPassword(event.target.value)
+  }
+  const handleSignIn = async () => {
+    const userData = { username, password };
+    try {
+      const response = await axios.post('http://'+backendip+':3000/login', userData, {
+        headers: {
+          'Content-Type': 'application/x-www-form-urlencoded'
+        }
+      })
+      if (response.status === 200) { // Checking the status code for success
+        console.log("Login Success");
+        dispatch(loginUser(response.data)); // Dispatching loginUser action with response data
+        console.log(user)
+        console.log("eiei")
+        navigate('/')
+      } else if (response.status === 401) {
+        console.eror(response.data.error);
+      }
+    } catch (error) {
+      alert(error.response.data.error)
+
+    }
+
+
+
   }
 
   return (
@@ -27,10 +59,10 @@ function SignIn() {
           <div className="flex justify-end pr-28 mb-28">
             <p className='text-lg text-[#63C7FF] font-bold'>Forgot password?</p>
           </div>
-          <button className="bg-[#738F78] text-2xl text-white p-4 mx-60 mb-6 rounded-lg">Sign In</button>
+          <button onClick={handleSignIn} className="bg-[#738F78] text-2xl text-white p-4 mx-60 mb-6 rounded-lg">Sign In</button>
           <div className="flex justify-center">
             <p className="text-2xl">Don't have an account?</p>
-            <p className="text-2xl text-[#63C7FF] pl-2 font-bold">Sign Up</p>
+            <a href={"/signup"} className="text-2xl text-[#63C7FF] pl-2 font-bold">Sign Up</a>
           </div>
         </div>
       </div>

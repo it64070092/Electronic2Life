@@ -1,148 +1,282 @@
 import React from "react";
+import { useNavigate } from 'react-router-dom';
 import {
   Navbar,
   MobileNav,
   Typography,
   Button,
+  Menu,
+  MenuHandler,
+  MenuList,
+  MenuItem,
+  Avatar,
+  Card,
   IconButton,
 } from "@material-tailwind/react";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
+import { logoutUser } from "../actions/userActions";
+import {
+  CubeTransparentIcon,
+  UserCircleIcon,
+  CodeBracketSquareIcon,
+  Square3Stack3DIcon,
+  ChevronDownIcon,
+  Cog6ToothIcon,
+  InboxArrowDownIcon,
+  LifebuoyIcon,
+  PowerIcon,
+  RocketLaunchIcon,
+  Bars2Icon,
+} from "@heroicons/react/24/solid";
 
-export default function NavBar() {
-  const [openNav, setOpenNav] = React.useState(false);
+// profile menu component
+
+export function ComplexNavbar() {
+
+  const user = useSelector(state => state.user);
+  const username = user.user.user.username
+  const isAuthen = user.isAuthenticated;
+  const navigate = useNavigate()
+  function ProfileMenu() {
+    const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+
+    const closeMenu = () => setIsMenuOpen(false);
+
+    return (
+      <Menu open={isMenuOpen} handler={setIsMenuOpen} placement="bottom-end" clas>
+     
+        <MenuHandler>
+          <Button
+            variant="text"
+            color="blue-gray"
+            className="flex items-center gap-1 rounded-full py-0.5 pr-2 pl-0.5 lg:ml-auto"
+          >
+               <span>{username}</span>
+            <Avatar
+              variant="circular"
+              size="sm"
+              alt="tania andrew"
+              className="border border-gray-900 p-0.5"
+              src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
+            />
+            <ChevronDownIcon
+              strokeWidth={2.5}
+              className={`h-3 w-3 transition-transform ${isMenuOpen ? "rotate-180" : ""
+                }`}
+            />
+          </Button>
+        </MenuHandler>
+        <MenuList className="p-1">
+
+
+          <MenuItem
+
+            onClick={closeMenu}
+            className={`flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                `}
+          >
+            {React.createElement(UserCircleIcon, {
+              className: `h-4 w-4   `,
+              strokeWidth: 2,
+            })}
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color={"inherit"}
+            >
+              my Profile
+            </Typography>
+          </MenuItem>
+
+          <MenuItem
+
+            onClick={handleSignOut}
+            className={`flex items-center gap-2 rounded hover:bg-red-500/10 focus:bg-red-500/10 active:bg-red-500/10"
+                `}
+          >
+        
+            <Typography
+              as="span"
+              variant="small"
+              className="font-normal"
+              color={"red"}
+            >
+              Log Out
+            </Typography>
+          </MenuItem>
+
+
+        </MenuList>
+      </Menu>
+    );
+  }
+
+
+
+
+
+  // nav list component
+  const navListItems = [
+    {
+      label: "สินค้ามือสอง",
+      icon: UserCircleIcon,
+    },
+    {
+      label: "Blocks",
+      icon: CubeTransparentIcon,
+    },
+    {
+      label: "Docs",
+      icon: CodeBracketSquareIcon,
+    },
+  ];
+
+  function NavList() {
+    return (
+      <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center">
+
+
+        {isAuthen ? (
+          <>
+
+            <Typography
+              key="eiei"
+              as="a"
+              href="#"
+              variant="small"
+              color="gray"
+              className="font-medium text-blue-gray-500 lg:hidden"
+            >
+
+              <MenuItem className="flex items-center gap-2 lg:rounded-full">
+                {React.createElement(UserCircleIcon, { className: "h-[18px] w-[18px]" })}{" "}
+                <span className="text-gray-900"> My Profile</span>
+              </MenuItem>
+            </Typography>
+
+            {navListItems.map(({ label, icon }, key) => (
+              <Typography
+                key={label}
+                as="a"
+                href="#"
+                variant="small"
+                color="gray"
+                className="font-medium text-blue-gray-500"
+              >
+                <MenuItem className="flex items-center gap-2 lg:rounded-full">
+                  {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "}
+                  <span className="text-gray-900"> {label}</span>
+                </MenuItem>
+              </Typography>
+
+            ))}
+            <Typography
+              key="Logout"
+              as="a"
+              href="#"
+              variant="small"
+              color="gray"
+              className="font-medium text-blue-gray-500 lg:hidden"
+            >
+              <MenuItem className="flex items-center gap-2 lg:rounded-full">
+
+                <span className="text-red-500"> Log Out</span>
+              </MenuItem>
+            </Typography>
+          </>
+        ) : (  <>
+
+    
+
+            {navListItems.map(({ label, icon }, key) => (
+              <Typography
+                key={label}
+                as="a"
+                href="#"
+                variant="small"
+                color="gray"
+                className="font-medium text-blue-gray-500"
+              >
+                <MenuItem className="flex items-center gap-2 lg:rounded-full">
+                  {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "}
+                  <span className="text-gray-900"> {label}</span>
+                </MenuItem>
+              </Typography>
+
+            ))}
+                    <Typography
+              key="eiei"
+              as="a"
+              href="#"
+              variant="small"
+              color="gray"
+              className="font-medium text-blue-gray-500 lg:hidden"
+             
+            >
+
+              <MenuItem className="flex items-center gap-2 lg:rounded-full">
+             {" "}
+                <span  onClick={()=>{navigate("/signin")}}className="text-gray-900 text-center"> Login</span>
+              </MenuItem>
+            </Typography>
+         
+          </>)}
+
+
+      </ul>
+    );
+  }
+
+  const [isNavOpen, setIsNavOpen] = React.useState(false);
+  const dispatch = useDispatch();
+  const toggleIsNavOpen = () => setIsNavOpen((cur) => !cur);
 
   React.useEffect(() => {
     window.addEventListener(
       "resize",
-      () => window.innerWidth >= 960 && setOpenNav(false),
+      () => window.innerWidth >= 960 && setIsNavOpen(false),
     );
   }, []);
-
-  const navList = (
-    <ul className="mt-2 mb-4 flex flex-col gap-2 lg:mb-0 lg:mt-0 lg:flex-row lg:items-center lg:gap-6">
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="flex items-center gap-x-2 p-1 font-medium"
-      >
-
-        <a href="#" className="flex items-center">
-          สินค้ามือสอง
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="flex items-center gap-x-2 p-1 font-medium"
-      >
-
-        <a href="#" className="flex items-center">
-          ติดต่อซ่อม
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="flex items-center gap-x-2 p-1 font-medium"
-      >
-
-        <a href="#" className="flex items-center">
-          Blocks
-        </a>
-      </Typography>
-      <Typography
-        as="li"
-        variant="small"
-        color="blue-gray"
-        className="flex items-center gap-x-2 p-1 font-medium"
-      >
-
-        <a href="#" className="flex items-center">
-          Docs
-        </a>
-      </Typography>
-    </ul>
-  );
-
+  const handleSignOut = () => {
+    dispatch(logoutUser())
+  }
   return (
-    <Navbar className="mx-auto max-w-screen-3xl lg:px-4 lg:py-4 text-black">
-      <div className=" mx-auto px-4 lg:px-0 flex items-center justify-between">
-
+    <Navbar className="mx-auto max-w-screen-3xl p-2 lg:rounded-full lg:pl-6 text-black">
+      <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
         <Typography
           as="a"
           href="/"
-          className="mr-4 cursor-pointer py-1.5 font-medium"
+          className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
         >
-          Material Tailwind
+          Electronic2lif
         </Typography>
-        <div className="hidden lg:block">{navList}</div>
-        <div className="flex items-center gap-x-1">
-          <Button variant="text" size="sm" className="hidden lg:inline-block">
-
-            <a href="/signup" className="flex items-center">
-              Login
-            </a>
-          </Button>
-          <Button
-            variant="gradient"
-            size="sm"
-            className="hidden lg:inline-block"
-          >
-            <span>Sign in</span>
-          </Button>
+        <div className="hidden lg:block">
+          <NavList />
         </div>
         <IconButton
+          size="sm"
+          color="red"
           variant="text"
-          className="ml-auto h-6 w-6 text-inherit hover:bg-transparent focus:bg-transparent active:bg-transparent lg:hidden"
-          ripple={false}
-          onClick={() => setOpenNav(!openNav)}
+          onClick={toggleIsNavOpen}
+          className="ml-auto mr-2 lg:hidden"
         >
-          {openNav ? (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              fill="none"
-              className="h-6 w-6"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M6 18L18 6M6 6l12 12"
-              />
-            </svg>
-          ) : (
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              className="h-6 w-6"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth={2}
-            >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                d="M4 6h16M4 12h16M4 18h16"
-              />
-            </svg>
-          )}
+          <Bars2Icon className="h-6 w-6" />
         </IconButton>
+        {!isAuthen ? (
+          <Button  onClick={()=>{navigate("/signin")}} size="sm" variant="text" className="hidden lg:block">
+            <span>Log In</span>
+          </Button>
+        ) : (
+          <div className="hidden lg:block">
+            <ProfileMenu />
+          </div>)}
+
+
       </div>
-      <MobileNav open={openNav}>
-        <div className="container mx-auto">
-          {navList}
-          <div className="flex items-center gap-x-1">
-            <Button fullWidth variant="text" size="sm" className="">
-              <span>Log In</span>
-            </Button>
-            <Button fullWidth variant="gradient" size="sm" className="">
-              <span>Sign in</span>
-            </Button>
-          </div>
-        </div>
+      <MobileNav open={isNavOpen} className="overflow-scroll">
+        <NavList />
       </MobileNav>
     </Navbar>
   );
