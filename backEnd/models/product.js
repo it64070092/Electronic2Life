@@ -13,6 +13,10 @@ const productSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  productImage: {
+    type: String, // Assuming the image filename will be stored as a string
+    required: true,
+  },
 });
 
 const Product = mongoose.model('Product', productSchema);

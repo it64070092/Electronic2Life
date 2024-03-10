@@ -1,8 +1,12 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const bcrypt = require('bcrypt');
+const path = require('path');
+
+const multer = require('multer');
 const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 const cors = require('cors');
@@ -15,6 +19,13 @@ mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mong
   useUnifiedTopology: true,
 });
 
+const storage = multer.diskStorage({
+  destination: './uploads/',
+  filename: function (req, file, cb) {
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  },
+});
+const upload = multer({ storage: storage });
 // Define a simple route
 app.get('/', (req, res) => {
   res.send('Hello MongoDB Atlas with Express.js!');
@@ -71,25 +82,47 @@ app.post('/register', async (req, res) => {
 });
 
 
-app.post('/post-product', async (req, res) => {
-  console.log(req.body)
+app.post('/post-product', upload.single('productImage'), async (req, res) => {
+  console.log(req.body);
   try {
     const { name, price, description } = req.body;
+
+    // Get the filename of the uploaded image from req.file
+    const productImage = req.file.filename;
 
     const newProduct = new Product({
       name,
       price,
       description,
+      productImage, // Include the image filename in the product data
     });
 
     const savedProduct = await newProduct.save();
-    res.status(201).json(savedProduct);
+    res.status(201).json({
+      message: 'Product created successfully',
+      product: savedProduct, // Include the entire product object in the response
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
+app.get('/get-products', async (req, res) => {
+  try {
+    // Fetch all products from the database
+    const products = await Product.find();
 
+    // Check if there are no products
+    if (products.length === 0) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    // Send the array of products in the response
+    res.status(200).json({ products });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 // Start the server
