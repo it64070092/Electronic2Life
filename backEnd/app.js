@@ -211,13 +211,14 @@ app.delete('/delete-products/:productId', async (req, res) => {
 app.post('/post-offer', upload.single('offerImage'), async (req, res) => {
   console.log(req.body);
   try {
-    const { name, address, description, tel, status } = req.body;
+    const { name, address, description, tel, status, userId } = req.body;
 
     // Get the filename of the uploaded image from req.file
     const offerImage = req.file.filename;
 
     const newOffer = new Offer({
       name,
+      userId,
       address,
       tel,
       status,
@@ -371,7 +372,7 @@ app.put('/update-payment/:paymentId', async (req, res) => {
   try {
     const paymentId = req.params.paymentId;
     const { status } = req.body;
-
+    
     // Check if the offer ID is valid
     if (!mongoose.Types.ObjectId.isValid(paymentId)) {
       return res.status(400).json({ error: 'Invalid payment ID' });

@@ -5,6 +5,10 @@ const OfferSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
+  userId: {
+    type : String,
+    required : true
+  },
   tel: {
     type: String,
     required: true,
