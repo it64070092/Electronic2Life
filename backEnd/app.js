@@ -6,6 +6,7 @@ const path = require('path');
 const multer = require('multer');
 const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
+const Offer = require('./models/form')
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -124,6 +125,123 @@ app.get('/get-products', async (req, res) => {
   }
 });
 
+// Update the product by ID
+app.put('/update-product/:productId', upload.single('productImage'), async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const { name, price , description} = req.body;
+
+    // Check if the product ID is valid
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add fields to update only if they are present in the request body
+    if (name) {
+      updateFields.name = name;
+    }
+    if (price) {
+      updateFields.price = price;
+    }
+    if (description) {
+      updateFields.description = description;
+    }
+
+    // Check if an image file was uploaded
+    if (req.file) {
+      updateFields.productImage = req.file.filename;
+    }
+
+    // Find the product by ID and update the specified fields
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated product
+    );
+
+    // Check if the product was found and updated
+    if (!updatedProduct) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/delete-products/:productId', async (req, res) => {
+  try {
+    const productId = req.params.productId;
+
+    // Find the product by productId and delete it
+    const deletedProduct = await Product.findByIdAndDelete(productId);
+
+    // Check if the product was found and deleted
+    if (!deletedProduct) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Fetch all products from the database after deletion
+    const products = await Product.find();
+
+    // Send the array of products in the response
+    res.status(200).json({ products });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+app.post('/post-offer', upload.single('offerImage'), async (req, res) => {
+  console.log(req.body);
+  try {
+    const { name, address, description, tel, status } = req.body;
+
+    // Get the filename of the uploaded image from req.file
+    const offerImage = req.file.filename;
+
+    const newOffer = new Offer({
+      name,
+      address,
+      tel,
+      status,
+      description,
+      offerImage, // Include the image filename in the product data
+    });
+
+    const savedOffer = await newOffer.save();
+    res.status(201).json({
+      message: 'Offer created successfully',
+      product: savedOffer, // Include the entire product object in the response
+    });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/get-orders', async (req, res) => {
+  try {
+    // Fetch all products from the database
+    const offers = await Offer.find();
+
+    // Check if there are no products
+    if (offers.length === 0) {
+      return res.status(404).json({ message: 'No products found' });
+    }
+
+    // Send the array of products in the response
+    res.status(200).json({ offers });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
