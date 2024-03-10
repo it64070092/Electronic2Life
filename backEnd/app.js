@@ -127,6 +127,11 @@ app.get('/get-products', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+
+
+  
+
+  
 });
 
 // Update the product by ID
@@ -247,12 +252,15 @@ app.get('/get-orders', async (req, res) => {
   }
 });
 
+
+
 app.put('/update-offer/:offerId', async (req, res) => {
   try {
     const offerId = req.params.offerId;
     const { status } = req.body;
     console.log(offerId)
     console.log(req.body)
+
     // Check if the offer ID is valid
     if (!mongoose.Types.ObjectId.isValid(offerId)) {
       return res.status(400).json({ error: 'Invalid offer ID' });
@@ -317,6 +325,87 @@ app.post('/post-payment', upload.single('paymentImage'), async (req, res) => {
     res.status(500).json({ error: 'Error creating payment' });
   }
 });
+
+
+
+app.put('/update-offer/:offerId', async (req, res) => {
+  try {
+    const offerId = req.params.offerId;
+    const { status } = req.body;
+
+    // Check if the offer ID is valid
+    if (!mongoose.Types.ObjectId.isValid(offerId)) {
+      return res.status(400).json({ error: 'Invalid offer ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add the status field to update if it's present in the request body
+    if (status !== undefined) {
+      updateFields.status = status;
+    }
+
+    // Find the offer by ID and update the specified fields
+    const updatedOffer = await Offer.findByIdAndUpdate(
+      offerId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated offer
+    );
+
+    // Check if the offer was found and updated
+    if (!updatedOffer) {
+      return res.status(404).json({ error: 'Offer not found' });
+    }
+
+    res.status(200).json(updatedOffer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.put('/update-payment/:paymentId', async (req, res) => {
+  try {
+    const paymentId = req.params.paymentId;
+    const { status } = req.body;
+
+    // Check if the offer ID is valid
+    if (!mongoose.Types.ObjectId.isValid(paymentId)) {
+      return res.status(400).json({ error: 'Invalid payment ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add the status field to update if it's present in the request body
+    if (status !== undefined) {
+      updateFields.status = status;
+    }
+
+    // Find the offer by ID and update the specified fields
+    const updatedOffer = await Payment.findByIdAndUpdate(
+      paymentId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated offer
+    );
+
+    // Check if the offer was found and updated
+    if (!updatedOffer) {
+      return res.status(404).json({ error: 'Payment not found' });
+    }
+
+    res.status(200).json(updatedOffer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
 
 // Start the server
 app.listen(PORT, () => {
