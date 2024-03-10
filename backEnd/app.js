@@ -7,11 +7,15 @@ const multer = require('multer');
 const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
 const Offer = require('./models/form')
+const Payment = require('./models/payment')
 
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 const cors = require('cors');
 // Middleware to parse JSON requests
+app.use('/uploads', express.static('uploads'));
+
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
 // Connect to MongoDB Atlas
@@ -240,6 +244,77 @@ app.get('/get-orders', async (req, res) => {
     res.status(200).json({ offers });
   } catch (error) {
     res.status(500).json({ error: error.message });
+  }
+});
+
+app.put('/update-offer/:offerId', async (req, res) => {
+  try {
+    const offerId = req.params.offerId;
+    const { status } = req.body;
+    console.log(offerId)
+    console.log(req.body)
+    // Check if the offer ID is valid
+    if (!mongoose.Types.ObjectId.isValid(offerId)) {
+      return res.status(400).json({ error: 'Invalid offer ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add the status field to update if it's present in the request body
+    if (status !== undefined) {
+      updateFields.status = status;
+    }
+    console.log(updateFields.status)
+
+    // Find the offer by ID and update the specified fields
+    const updatedOffer = await Offer.findByIdAndUpdate(
+      offerId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated offer
+    );
+
+    // Check if the offer was found and updated
+    if (!updatedOffer) {
+      return res.status(404).json({ error: 'Offer not found' });
+    }
+
+    res.status(200).json(updatedOffer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/post-payment', upload.single('paymentImage'), async (req, res) => {
+  try {
+    // Ensure required fields are present
+    const { userId, productId, price, address, status } = req.body;
+    if (!userId || !productId || !price || !address || !status) {
+      return res.status(400).json({ error: 'Missing required fields' });
+    }
+
+    // Get the filename of the uploaded image from req.file
+    const paymentImage = req.file.filename;
+
+    const newPayment = new Payment({
+      userId,
+      productId,
+      price,
+      status,
+      address,
+      paymentImage,
+    });
+
+    const savedPayment = await newPayment.save();
+    res.status(201).json({
+      message: 'Payment created successfully',
+      payment: savedPayment,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Error creating payment' });
   }
 });
 
