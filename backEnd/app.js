@@ -128,12 +128,28 @@ app.get('/get-products', async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
-
-
-  
-
-  
 });
+
+app.get('/get-product/:id', async (req, res) => {
+  try {
+    const productId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const product = await Product.findById(productId);
+
+    // Check if the product with the given ID exists
+    if (!product) {
+      return res.status(404).json({ message: 'Product not found' });
+    }
+
+    // Send the product in the response
+    res.status(200).json({ product });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
 
 // Update the product by ID
 app.put('/update-product/:productId', upload.single('productImage'), async (req, res) => {
