@@ -104,7 +104,7 @@ function ProductDetail() {
 
   return (
     <>
-      <ComplexNavbar />
+     
       <div className="flex flex-row items-center justify-center h-screen px-9">
         <div className="flex flex-col w-3/5 h-3/5 justify-center items-center rounded-3xl ml-30">
           <img
