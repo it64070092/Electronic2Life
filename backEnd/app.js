@@ -423,6 +423,43 @@ app.put('/update-payment/:paymentId', async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
+app.put('/update-repair/:repairId', async (req, res) => {
+  try {
+    const repairId = req.params.repairId;
+    const { status } = req.body;
+    
+    // Check if the offer ID is valid
+    if (!mongoose.Types.ObjectId.isValid(repairId)) {
+      return res.status(400).json({ error: 'Invalid repair ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add the status field to update if it's present in the request body
+    if (status !== undefined) {
+      updateFields.status = status;
+    }
+
+    // Find the offer by ID and update the specified fields
+    const updatedRepair = await Repair.findByIdAndUpdate(
+      repairId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated offer
+    );
+
+    // Check if the offer was found and updated
+    if (!updatedRepair) {
+      return res.status(404).json({ error: 'Repair not found' });
+    }
+
+    res.status(200).json(updatedRepair);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 // Update user profile by ID
 app.put('/update-profile/:userId', async (req, res) => {
   try {
