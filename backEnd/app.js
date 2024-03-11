@@ -8,6 +8,7 @@ const User = require('./models/user'); // Check the path
 const Product = require('./models/product');
 const Offer = require('./models/form')
 const Payment = require('./models/payment')
+const Repair = require('./models/repair')
 
 const app = express();
 
@@ -401,6 +402,92 @@ app.put('/update-payment/:paymentId', async (req, res) => {
     }
 
     res.status(200).json(updatedOffer);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+// Update user profile by ID
+app.put('/update-profile/:userId', async (req, res) => {
+  try {
+    console.log(req.body)
+    const userId = req.params.userId;
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      address,
+    } = req.body;
+
+    // Check if the user ID is valid
+    if (!mongoose.Types.ObjectId.isValid(userId)) {
+      return res.status(400).json({ error: 'Invalid user ID' });
+    }
+
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add the fields to update if they are present in the request body
+    if (firstName !== undefined) {
+      updateFields.firstName = firstName;
+    }
+
+    if (lastName !== undefined) {
+      updateFields.lastName = lastName;
+    }
+
+    if (phoneNumber !== undefined) {
+      updateFields.phoneNumber = phoneNumber;
+    }
+
+    if (address !== undefined) {
+      updateFields.address = address;
+    }
+
+    console.log(updateFields)
+    // Find the user by ID and update the specified fields
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated user
+    );
+
+    // Check if the user was found and updated
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.status(200).json(updatedUser);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.post('/post-repair', upload.single('repairImage'), async (req, res) => {
+  console.log(req.body);
+  try {
+    const { name, address, description, tel, status, userId } = req.body;
+
+    // Get the filename of the uploaded image from req.file
+    const repairImage = req.file.filename;
+
+    const newRepair = new Repair({
+      name,
+      userId,
+      address,
+      tel,
+      status,
+      description,
+      repairImage, // Include the image filename in the product data
+    });
+
+    const savedRepair = await newRepair.save();
+    res.status(201).json({
+      message: 'Repair created successfully',
+      product: savedRepair, // Include the entire product object in the response
+    });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
