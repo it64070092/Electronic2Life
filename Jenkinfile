@@ -39,11 +39,11 @@ pipeline {
                         dir('./Electronic2Life/backEnd') {
                             script {
                                 // Define Docker image name
-                                
 
+                                sh 'echo start build the Docker image = $DOCKER_IMAGE'
                                 // Build the Docker image
                                 sh 'docker build -t $BACKEND_IMAGE .'
-
+                    
                                 // Login to Docker Hub
                                 sh "docker login --username ${DOCKER_CREDENTIALS_USR} --password-stdin"
 
