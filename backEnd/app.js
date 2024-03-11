@@ -617,7 +617,7 @@ app.get('/get-repair/:id', async (req, res) => {
     const repairId = req.params.id;
 
     // Fetch the product from the database by ID
-    const repair = await repair.findById(repairId);
+    const repair = await Repair.findById(repairId);
 
     // Check if the repair with the given ID exists
     if (!repair) {
