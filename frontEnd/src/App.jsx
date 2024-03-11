@@ -9,15 +9,18 @@ import NotFound from './content/NotFound';
 import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AdminPage from './content/AdminPage';
-import RequestPage from './content/RequestPage';
+import FixRequest from './content/FixRequest';
+import SellRequest from './content/SellRequest';
 import AddProductForm from './components/forAdmin/AddProduct';
+import Tracking from './content/Tracking';
+import { ComplexNavbar } from './components/NavBar';
 function App() {
 
 
   return (
     <Router>
     <div className='App'>
-    
+    <ComplexNavbar/>
       <Routes>
         <Route path='/' element={<HomePage />} />
         <Route path='/signup' element={<SignUp/>} />
@@ -25,10 +28,12 @@ function App() {
         <Route path='/product/:productId' element={<ProductDetail />} />
         <Route path='*' element={<NotFound />} />
         <Route path='/product' element={<ProductPage />} />
-        <Route path='/request' element={<RequestPage/>} />
+        <Route path='/fixrequest' element={<FixRequest/>} />
+        <Route path='/SellRequest' element={<SellRequest/>} />
         <Route path='/admin' element={<AdminPage/>} />
         <Route path='/profile' element={<Profile/>} />
         <Route path='/addproduct' element={<AddProductForm/>}/>
+        <Route path='/user/tracking' element={<Tracking/>}/>
       </Routes>
     
     </div>

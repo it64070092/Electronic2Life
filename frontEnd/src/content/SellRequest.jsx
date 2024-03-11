@@ -5,7 +5,7 @@ import '../App.css';
 import backendip from '../../backendip';
 import { ComplexNavbar } from '../components/NavBar';
 import { useSelector } from 'react-redux';
-function RequestPage() {
+function SellRequest() {
 
   const user = useSelector(state => state.user);
   const user_id = user.user?.user?._id;
@@ -78,7 +78,7 @@ function RequestPage() {
 
   return (
     <>
-      <ComplexNavbar />
+
       <div className="flex justify-center items-center">
 
 
@@ -191,11 +191,11 @@ function RequestPage() {
 
       </div>
       <div className='text-center pl-20 pr-20'>
-        <h2 className="text-2xl font-semibold mb-4 mt-20 ">นโยบายการให้บริการ</h2>
+        <h2 className="text-2xl font-semibold mb-4 mt-20 ">นโยบายการให้บริการรับซื้อเครื่องใช้ไฟฟ้า</h2>
         <p className="text-gray-600">เพื่อให้ลูกค้าทราบถึงนโยบายการให้บริการของเราในการรับซื้อสินค้า สิ่งที่เรามีให้บริการคือการรองรับคำขอส่งสินค้ามาที่เราและรอให้เราติดต่อกลับไปเพื่อการประสานงานเพิ่มเติม เมื่อเราติดต่อกลับไปเราจะจัดการในการรับสินค้าตามที่ลูกค้าระบุไว้ในที่อยู่ที่ลูกค้ากำหนดให้เรา หากมีข้อสงสัยเพิ่มเติมหรือต้องการข้อมูลเพิ่มเติม ลูกค้าสามารถติดต่อเราได้ผ่านช่องทางติดต่อที่เรามีให้บริการ ขอบคุณที่ให้ความสนใจในการใช้บริการของเราและเรายินดีที่จะให้บริการคุณในทุกขั้นตอนของกระบวนการรับซื้อสินค้าของคุณ</p>
       </div>
     </>
   );
 }
 
-export default RequestPage;
+export default SellRequest;
