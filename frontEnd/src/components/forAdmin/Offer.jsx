@@ -1,53 +1,64 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import backendip from '../../../backendip';
+import axios from "axios";
 
 const Offer = () => {
 
-    const [Offers, setOffers] = useState([]);
-    useEffect(() => {
-        // Fetch products from backend when the component mounts
-        axios.get(`http://${backendip}:3000/get-products`)
-          .then(response => {
-            setProducts(response.data.products);
-          })
-          .catch(error => {
-            console.error('Error fetching products:', error);
-          });
-      }, []); // Empty dependency array ensures this effect runs only once
-    
-  return (
-    <div class="container mx-auto px-4 py-8">
-  <h2 class="text-2xl font-bold mb-4">Electronic Waste Offerings</h2>
-  <div class="overflow-x-auto">
-    <table class="table-auto border-collapse border border-gray-500">
-      <thead>
-        <tr>
-          <th class="px-4 py-2 bg-gray-200 border border-gray-500">Product</th>
-          <th class="px-4 py-2 bg-gray-200 border border-gray-500">Description</th>
-          <th class="px-4 py-2 bg-gray-200 border border-gray-500">Price</th>
-          <th class="px-4 py-2 bg-gray-200 border border-gray-500">Rating</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td class="px-4 py-2 border border-gray-500">Product A</td>
-          <td class="px-4 py-2 border border-gray-500">Description of Product A</td>
-          <td class="px-4 py-2 border border-gray-500">100</td>
-          <td class="px-4 py-2 border border-gray-500">4.5/5</td>
-        </tr>
-        <tr>
-          <td class="px-4 py-2 border border-gray-500">Product B</td>
-          <td class="px-4 py-2 border border-gray-500">Description of Product B</td>
-          <td class="px-4 py-2 border border-gray-500">150</td>
-          <td class="px-4 py-2 border border-gray-500">4.2/5</td>
-        </tr>
-        {/* <!-- Add more rows as needed --> */}
-      </tbody>
-    </table>
-  </div>
-</div>
+  const [offers, setOffers] = useState([]);
 
-  );
+  const getUserById = async (userId) => {
+    try {
+        const response = await axios.get(`http://${backendip}:3000/get-user/${userId}`);
+        return response.data.user;
+    } catch (error) {
+        console.error("Error fetching user:", error);
+        return null;
+    }
 };
+
+useEffect(() => {
+  const fetchData = async () => {
+      try {
+          const response = await axios.get("http://" + backendip + ":3000/get-offer");
+          const offerData = response.data.offers;
+
+          const offersWithUser = await Promise.all(offerData.map(async (offer) => {
+              const user = await getUserById(offer.userId);
+              return { ...offer, user };
+          }));
+
+          setOffers(offersWithUser);
+      } catch (error) {
+          console.error("Error fetching offers:", error);
+      }
+  };
+
+  fetchData();
+}, []);
+
+  return (
+    <>
+      <div className='flex flex-col w-full h-full bg-white'>
+        <div className='flex flex-col w-full'>
+          {offers.map((offer) => (
+            <div className='flex flex-row justify-between border-b-2 border-solid border-black py-6 px-4' key={offer._id}>
+              <div className='flex flex-col w-1/2 gap-2'>
+                <p>จากผู้ใช้ : {offer.user?.firstName} {offer.user?.lastName}</p>
+                <p>เบอร์โทร: {offer.tel} </p>
+                <p>ที่อยู่: {offer.address}</p>
+                <p>หัวข้อ: {offer.name}</p>
+                <p>รายละเอียด: {offer.description}</p>
+                <p>สถานะ: {offer.status}</p>
+              </div>
+              <div className='flex flex-col mr-10 justify-center'>
+                <button className="px-3 py-1 bg-blue-500 text-white rounded-md mr-2">View</button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </>
+  )
+}
 
 export default Offer;
