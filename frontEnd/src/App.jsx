@@ -30,7 +30,7 @@ function App() {
         <Route path='*' element={<NotFound />} />
         <Route path='/product' element={<ProductPage />} />
         <Route path='/fixrequest' element={<FixRequest/>} />
-        <Route path='/SellRequest' element={<SellRequest/>} />
+        <Route path='/sellrequest' element={<SellRequest/>} />
         <Route path='/admin' element={<AdminPage/>} />
         <Route path='/profile' element={<Profile/>} />
         <Route path='/addproduct' element={<AddProductForm/>}/>
