@@ -65,7 +65,7 @@ function HomePage() {
                     <div className='text-center pt-6 pb-6'> <h1 className=' text-3xl font-bold text-black'>เกี่ยวกับเรา</h1></div>
                     <div className='py-8 flex-col lg:flex-row flex items-center justify-center'>
                         <div className="w-1/4 lg:order-last">
-                            <img src="banner-img.png" alt="Your Image" className="w-full h-auto" />
+                            <img src="https://homeboyrecycling.com/wp-content/uploads/2019/07/60.-Group-shot-2018-Crop-816x490.jpg" alt="Your Image" className="w-full h-auto" />
 
                         </div>
                         <div className=" w-1/2 sm:w-4/4 lg:order-last flex items-center justify-center">
@@ -91,7 +91,7 @@ function HomePage() {
                             </div>
                         </div>
                         <div className="w-1/4 lg:order-last">
-                            <img src="banner-img.png" alt="Your Image" className="w-full h-auto" />
+                            <img src="https://engineered.co.ke/wp-content/uploads/2023/06/iStock_000020875510Medium.jpg" alt="Your Image" className="w-full h-auto" />
 
                         </div>
                     </div>
