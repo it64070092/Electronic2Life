@@ -23,7 +23,7 @@ mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mong
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
+app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
   destination: './uploads/',
   filename: function (req, file, cb) {

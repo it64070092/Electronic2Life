@@ -10,7 +10,7 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import AdminPage from './content/AdminPage';
 import RequestPage from './content/RequestPage';
-
+import AddProductForm from './components/forAdmin/AddProduct';
 function App() {
 
 
@@ -28,7 +28,7 @@ function App() {
         <Route path='/request' element={<RequestPage/>} />
         <Route path='/admin' element={<AdminPage/>} />
         <Route path='/profile' element={<Profile/>} />
-
+        <Route path='/addproduct' element={<AddProductForm/>}/>
       </Routes>
     
     </div>
