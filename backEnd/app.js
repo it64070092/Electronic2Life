@@ -617,7 +617,7 @@ app.get('/get-repair/:id', async (req, res) => {
     const repairId = req.params.id;
 
     // Fetch the product from the database by ID
-    const repair = await Repair.findById(repairId);
+    const repair = await repair.findById(repairId);
 
     // Check if the repair with the given ID exists
     if (!repair) {
@@ -626,6 +626,26 @@ app.get('/get-repair/:id', async (req, res) => {
 
     // Send the repair in the response
     res.status(200).json({ repair });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/get-user/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const user = await User.findById(userId);
+
+    // Check if the user with the given ID exists
+    if (!user) {
+      return res.status(404).json({ message: 'user not found' });
+    }
+
+    // Send the user in the response
+    res.status(200).json({ user });
   } catch (error) {
     // Handle errors
     res.status(500).json({ error: error.message });
