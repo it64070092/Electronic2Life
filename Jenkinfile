@@ -4,6 +4,8 @@ pipeline {
     environment {
         // Define variables
         DOCKER_CREDENTIALS = credentials('dockerhub')
+        BACKEND_IMAGE = 'it64070092/electronic2life-backend-1:latest'
+        FRONTEND_IMAGE = 'it64070092/electronic2life-frontend-1:latest'
     }
 
 
@@ -37,30 +39,28 @@ pipeline {
                         dir('./Electronic2Life/backEnd') {
                             script {
                                 // Define Docker image name
-                                def backendImage = 'it64070092/electronic2life-backend-1:latest'
+                                
 
                                 // Build the Docker image
-                                sh 'docker build -t $backendImage .'
+                                sh 'docker build -t $BACKEND_IMAGE .'
 
                                 // Login to Docker Hub
-                                sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
+                                sh "docker login --username ${DOCKER_CREDENTIALS_USR} --password-stdin"
 
                                 // Push the Docker image to Docker Hub
-                                sh "docker push $backendImage"
+                                sh "docker push $BACKEND_IMAGE"
                             }
                         }
 
                         // Frontend container
                         dir('./Electronic2Life/frontEnd') {
                             script {
-                                // Define Docker image name
-                                def frontendImage = 'it64070092/electronic2life-frontend-1:latest'
 
                                 // Build the Docker image
-                                sh 'docker build -t $frontendImage .'
+                                sh 'docker build -t $FRONTEND_IMAGE .'
 
                                 // Push the Docker image to Docker Hub
-                                sh "docker push $frontendImage"
+                                sh "docker push $FRONTEND_IMAGE"
                             }
                         }
                     }
