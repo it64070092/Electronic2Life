@@ -38,7 +38,8 @@ function SellRequest() {
     formDataToSend.append('description', formData.description);
     formDataToSend.append('offerImage', formData.image);
     formDataToSend.append('address', formData.address);
-    formDataToSend.append("userId", user_id)
+    formDataToSend.append("userId", user_id);
+    formDataToSend.append("status", "รอการตรวจสอบ");
 
     try {
       const response = await axios.post('http://' + backendip + ':3000/post-offer', formDataToSend, {

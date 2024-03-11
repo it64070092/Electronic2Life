@@ -12,10 +12,10 @@ const RepairDetail = ({ productId, onBack }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://${backendip}:3000/get-repairs/${userId}`);
-        console.log("eeiii", response.data.repairs[0])
+        const response = await axios.get(`http://${backendip}:3000/get-repair/${productId}`);
+        console.log("eeiii", response.data.repair)
 
-        setRepairDetail(response.data.repairs[0]); // Assuming response.data contains the details of the selected product
+        setRepairDetail(response.data.repair); // Assuming response.data contains the details of the selected product
       } catch (error) {
         console.error('Error fetching data:', error);
       }

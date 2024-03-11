@@ -5,6 +5,8 @@ import RepairTracking from '../components/userTracking/RepairTracking';
 import RepairDetail from '../components/userTracking/RepairDetail';
 import BuyDetail from '../components/userTracking/BuyDetail';
 import BuyTracking from '../components/userTracking/BuyTracking';
+import SellTracking from '../components/userTracking/SellTracking';
+import SellDetail from '../components/userTracking/SellDetail';
 const Tracking = () => {
     const [activeTab, setActiveTab] = useState('การซ่อม');
     const [selectedProductId, setSelectedProductId] = useState(null);
@@ -49,8 +51,8 @@ const Tracking = () => {
                 {activeTab === 'การซ่อม' && selectedProductId !== null && <RepairDetail productId={selectedProductId} onBack={() => setSelectedProductId(null)} />}
                 {activeTab === 'การซื้อ' && selectedProductId === null && <BuyTracking onProductClick={handleProductClick} />}
                 {activeTab === 'การซื้อ' && selectedProductId !== null && <BuyDetail payment={selectedProductId}onBack={() => setSelectedProductId(null)} />}
-                {activeTab === 'การซื้อ' && <h1>การซื้อ</h1>}
-                {activeTab === 'การขาย' && <h1>การขาย</h1>}
+                {activeTab === 'การขาย' && selectedProductId === null && <SellTracking onProductClick={handleProductClick} />}
+                {activeTab === 'การขาย' && selectedProductId !== null && <SellDetail offer={selectedProductId}onBack={() => setSelectedProductId(null)} />}
                 {/* Add more content components for other tabs */}
             </div>
         </div>
