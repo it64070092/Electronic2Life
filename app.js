@@ -1,68 +1,59 @@
-const express = require("express");
-const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const path = require("path");
+const express = require('express');
+const mongoose = require('mongoose');
+const bcrypt = require('bcrypt');
+const path = require('path');
 
-const multer = require("multer");
-const User = require("./models/user"); // Check the path
-const Product = require("./models/product");
-const Offer = require("./models/form");
-const Payment = require("./models/payment");
-const Repair = require("./models/repair");
+const multer = require('multer');
+const User = require('./models/user'); // Check the path
+const Product = require('./models/product');
+const Offer = require('./models/form')
+const Payment = require('./models/payment')
+const Repair = require('./models/repair')
 
 const app = express();
 
 const PORT = process.env.PORT || 3000;
-const cors = require("cors");
+const cors = require('cors');
 // Middleware to parse JSON requests
-app.use("/uploads", express.static("uploads"));
+app.use('/uploads', express.static('uploads'));
 
 app.use(express.urlencoded({ extended: true }));
-app.use(cors());
+app.use(cors())
 // Connect to MongoDB Atlas
-mongoose.connect(
-  "mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
-);
-app.use("/uploads", express.static("uploads"));
+mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/', {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+});
+app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
-  destination: "./uploads/",
+  destination: './uploads/',
   filename: function (req, file, cb) {
-    cb(
-      null,
-      file.fieldname + "-" + Date.now() + path.extname(file.originalname)
-    );
+    cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
   },
 });
 const upload = multer({ storage: storage });
 // Define a simple route
-app.get("/", (req, res) => {
-  res.send("Hello MongoDB Atlas with Express.js!");
+app.get('/', (req, res) => {
+  res.send('Hello MongoDB Atlas with Express.js!');
 });
-app.post("/login", async (req, res) => {
+app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
 
     // Find the user by username
     const user = await User.findOne({ username });
-    console.log(user);
+    console.log(user)
     // If the user doesn't exist, return an error
     if (!user) {
-      return res
-        .status(401)
-        .json({ error: "No User Name", username: username });
+      return res.status(401).json({ error: 'No User Name',
+    username:username });
     }
 
     // Compare the entered password with the hashed password in the database
     const passwordMatch = await bcrypt.compare(password, user.password);
 
-    if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ error: "Password Wrong", username: username });
+    if (!passwordMatch) { 
+      return res.status(401).json({ error: 'Password Wrong', username:username });
     }
     res.status(200).json({ user });
     // res.status(200).json({ message: 'Login successful Welcome ' + user.email});
@@ -71,15 +62,15 @@ app.post("/login", async (req, res) => {
   }
 });
 // Register a new user
-app.post("/register", async (req, res) => {
-  console.log(req.body);
+app.post('/register', async (req, res) => {
+  console.log(req.body)
   try {
     const { username, email, password } = req.body;
 
     // Check if user already exists
     const existingUser = await User.findOne({ $or: [{ username }, { email }] });
     if (existingUser) {
-      return res.status(400).json({ error: "User already exists" });
+      return res.status(400).json({ error: 'User already exists' });
     }
 
     const newUser = new User({
@@ -93,9 +84,11 @@ app.post("/register", async (req, res) => {
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
+ 
 });
 
-app.post("/post-product", upload.single("productImage"), async (req, res) => {
+
+app.post('/post-product', upload.single('productImage'), async (req, res) => {
   console.log(req.body);
   try {
     const { name, price, description } = req.body;
@@ -112,7 +105,7 @@ app.post("/post-product", upload.single("productImage"), async (req, res) => {
 
     const savedProduct = await newProduct.save();
     res.status(201).json({
-      message: "Product created successfully",
+      message: 'Product created successfully',
       product: savedProduct, // Include the entire product object in the response
     });
   } catch (error) {
@@ -120,14 +113,14 @@ app.post("/post-product", upload.single("productImage"), async (req, res) => {
   }
 });
 
-app.get("/get-products", async (req, res) => {
+app.get('/get-products', async (req, res) => {
   try {
     // Fetch all products from the database
     const products = await Product.find();
 
     // Check if there are no products
     if (products.length === 0) {
-      return res.status(404).json({ message: "No products found" });
+      return res.status(404).json({ message: 'No products found' });
     }
 
     // Send the array of products in the response
@@ -137,7 +130,7 @@ app.get("/get-products", async (req, res) => {
   }
 });
 
-app.get("/get-product/:id", async (req, res) => {
+app.get('/get-product/:id', async (req, res) => {
   try {
     const productId = req.params.id;
 
@@ -146,7 +139,7 @@ app.get("/get-product/:id", async (req, res) => {
 
     // Check if the product with the given ID exists
     if (!product) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     // Send the product in the response
@@ -157,61 +150,58 @@ app.get("/get-product/:id", async (req, res) => {
   }
 });
 
+
 // Update the product by ID
-app.put(
-  "/update-product/:productId",
-  upload.single("productImage"),
-  async (req, res) => {
-    try {
-      const productId = req.params.productId;
-      const { name, price, description } = req.body;
+app.put('/update-product/:productId', upload.single('productImage'), async (req, res) => {
+  try {
+    const productId = req.params.productId;
+    const { name, price , description} = req.body;
 
-      // Check if the product ID is valid
-      if (!mongoose.Types.ObjectId.isValid(productId)) {
-        return res.status(400).json({ error: "Invalid product ID" });
-      }
-
-      // Initialize an empty update object
-      const updateFields = {};
-
-      // Add fields to update only if they are present in the request body
-      if (name) {
-        updateFields.name = name;
-      }
-      if (price) {
-        updateFields.price = price;
-      }
-      if (description) {
-        updateFields.description = description;
-      }
-
-      // Check if an image file was uploaded
-      if (req.file) {
-        updateFields.productImage = req.file.filename;
-      }
-
-      // Find the product by ID and update the specified fields
-      const updatedProduct = await Product.findByIdAndUpdate(
-        productId,
-        {
-          $set: updateFields,
-        },
-        { new: true } // Return the updated product
-      );
-
-      // Check if the product was found and updated
-      if (!updatedProduct) {
-        return res.status(404).json({ error: "Product not found" });
-      }
-
-      res.status(200).json(updatedProduct);
-    } catch (error) {
-      res.status(500).json({ error: error.message });
+    // Check if the product ID is valid
+    if (!mongoose.Types.ObjectId.isValid(productId)) {
+      return res.status(400).json({ error: 'Invalid product ID' });
     }
-  }
-);
 
-app.delete("/delete-products/:productId", async (req, res) => {
+    // Initialize an empty update object
+    const updateFields = {};
+
+    // Add fields to update only if they are present in the request body
+    if (name) {
+      updateFields.name = name;
+    }
+    if (price) {
+      updateFields.price = price;
+    }
+    if (description) {
+      updateFields.description = description;
+    }
+
+    // Check if an image file was uploaded
+    if (req.file) {
+      updateFields.productImage = req.file.filename;
+    }
+
+    // Find the product by ID and update the specified fields
+    const updatedProduct = await Product.findByIdAndUpdate(
+      productId,
+      {
+        $set: updateFields,
+      },
+      { new: true } // Return the updated product
+    );
+
+    // Check if the product was found and updated
+    if (!updatedProduct) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
+
+    res.status(200).json(updatedProduct);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.delete('/delete-products/:productId', async (req, res) => {
   try {
     const productId = req.params.productId;
 
@@ -220,7 +210,7 @@ app.delete("/delete-products/:productId", async (req, res) => {
 
     // Check if the product was found and deleted
     if (!deletedProduct) {
-      return res.status(404).json({ message: "Product not found" });
+      return res.status(404).json({ message: 'Product not found' });
     }
 
     // Fetch all products from the database after deletion
@@ -233,7 +223,9 @@ app.delete("/delete-products/:productId", async (req, res) => {
   }
 });
 
-app.post("/post-offer", upload.single("offerImage"), async (req, res) => {
+
+
+app.post('/post-offer', upload.single('offerImage'), async (req, res) => {
   console.log(req.body);
   try {
     const { name, address, description, tel, status, userId } = req.body;
@@ -253,7 +245,7 @@ app.post("/post-offer", upload.single("offerImage"), async (req, res) => {
 
     const savedOffer = await newOffer.save();
     res.status(201).json({
-      message: "Offer created successfully",
+      message: 'Offer created successfully',
       product: savedOffer, // Include the entire product object in the response
     });
   } catch (error) {
@@ -261,14 +253,14 @@ app.post("/post-offer", upload.single("offerImage"), async (req, res) => {
   }
 });
 
-app.get("/get-orders", async (req, res) => {
+app.get('/get-orders', async (req, res) => {
   try {
     // Fetch all products from the database
     const offers = await Offer.find();
 
     // Check if there are no products
     if (offers.length === 0) {
-      return res.status(404).json({ message: "No products found" });
+      return res.status(404).json({ message: 'No products found' });
     }
 
     // Send the array of products in the response
@@ -278,16 +270,18 @@ app.get("/get-orders", async (req, res) => {
   }
 });
 
-app.put("/update-offer/:offerId", async (req, res) => {
+
+
+app.put('/update-offer/:offerId', async (req, res) => {
   try {
     const offerId = req.params.offerId;
     const { status } = req.body;
-    console.log(offerId);
-    console.log(req.body);
+    console.log(offerId)
+    console.log(req.body)
 
     // Check if the offer ID is valid
     if (!mongoose.Types.ObjectId.isValid(offerId)) {
-      return res.status(400).json({ error: "Invalid offer ID" });
+      return res.status(400).json({ error: 'Invalid offer ID' });
     }
 
     // Initialize an empty update object
@@ -297,7 +291,7 @@ app.put("/update-offer/:offerId", async (req, res) => {
     if (status !== undefined) {
       updateFields.status = status;
     }
-    console.log(updateFields.status);
+    console.log(updateFields.status)
 
     // Find the offer by ID and update the specified fields
     const updatedOffer = await Offer.findByIdAndUpdate(
@@ -310,7 +304,7 @@ app.put("/update-offer/:offerId", async (req, res) => {
 
     // Check if the offer was found and updated
     if (!updatedOffer) {
-      return res.status(404).json({ error: "Offer not found" });
+      return res.status(404).json({ error: 'Offer not found' });
     }
 
     res.status(200).json(updatedOffer);
@@ -319,12 +313,12 @@ app.put("/update-offer/:offerId", async (req, res) => {
   }
 });
 
-app.post("/post-payment", upload.single("paymentImage"), async (req, res) => {
+app.post('/post-payment', upload.single('paymentImage'), async (req, res) => {
   try {
     // Ensure required fields are present
-    const { userId, productId, address, status, tel } = req.body;
-    if (!userId || !productId || !address || !status || !tel) {
-      return res.status(400).json({ error: "Missing required fields" });
+    const { userId, productId, price, address, status } = req.body;
+    if (!userId || !productId || !price || !address || !status) {
+      return res.status(400).json({ error: 'Missing required fields' });
     }
 
     // Get the filename of the uploaded image from req.file
@@ -333,31 +327,33 @@ app.post("/post-payment", upload.single("paymentImage"), async (req, res) => {
     const newPayment = new Payment({
       userId,
       productId,
+      price,
       status,
       address,
       paymentImage,
-      tel,
     });
 
     const savedPayment = await newPayment.save();
     res.status(201).json({
-      message: "Payment created successfully",
+      message: 'Payment created successfully',
       payment: savedPayment,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Error creating payment" });
+    res.status(500).json({ error: 'Error creating payment' });
   }
 });
 
-app.put("/update-offer/:offerId", async (req, res) => {
+
+
+app.put('/update-offer/:offerId', async (req, res) => {
   try {
     const offerId = req.params.offerId;
     const { status } = req.body;
 
     // Check if the offer ID is valid
     if (!mongoose.Types.ObjectId.isValid(offerId)) {
-      return res.status(400).json({ error: "Invalid offer ID" });
+      return res.status(400).json({ error: 'Invalid offer ID' });
     }
 
     // Initialize an empty update object
@@ -379,7 +375,7 @@ app.put("/update-offer/:offerId", async (req, res) => {
 
     // Check if the offer was found and updated
     if (!updatedOffer) {
-      return res.status(404).json({ error: "Offer not found" });
+      return res.status(404).json({ error: 'Offer not found' });
     }
 
     res.status(200).json(updatedOffer);
@@ -388,14 +384,15 @@ app.put("/update-offer/:offerId", async (req, res) => {
   }
 });
 
-app.put("/update-payment/:paymentId", async (req, res) => {
+
+app.put('/update-payment/:paymentId', async (req, res) => {
   try {
     const paymentId = req.params.paymentId;
     const { status } = req.body;
-
+    
     // Check if the offer ID is valid
     if (!mongoose.Types.ObjectId.isValid(paymentId)) {
-      return res.status(400).json({ error: "Invalid payment ID" });
+      return res.status(400).json({ error: 'Invalid payment ID' });
     }
 
     // Initialize an empty update object
@@ -417,7 +414,7 @@ app.put("/update-payment/:paymentId", async (req, res) => {
 
     // Check if the offer was found and updated
     if (!updatedOffer) {
-      return res.status(404).json({ error: "Payment not found" });
+      return res.status(404).json({ error: 'Payment not found' });
     }
 
     res.status(200).json(updatedOffer);
@@ -425,53 +422,21 @@ app.put("/update-payment/:paymentId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.put('/update-repair/:repairId', async (req, res) => {
-  try {
-    const repairId = req.params.repairId;
-    const { status } = req.body;
-    
-    // Check if the offer ID is valid
-    if (!mongoose.Types.ObjectId.isValid(repairId)) {
-      return res.status(400).json({ error: 'Invalid repair ID' });
-    }
-
-    // Initialize an empty update object
-    const updateFields = {};
-
-    // Add the status field to update if it's present in the request body
-    if (status !== undefined) {
-      updateFields.status = status;
-    }
-
-    // Find the offer by ID and update the specified fields
-    const updatedRepair = await Repair.findByIdAndUpdate(
-      repairId,
-      {
-        $set: updateFields,
-      },
-      { new: true } // Return the updated offer
-    );
-
-    // Check if the offer was found and updated
-    if (!updatedRepair) {
-      return res.status(404).json({ error: 'Repair not found' });
-    }
-
-    res.status(200).json(updatedRepair);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 // Update user profile by ID
-app.put("/update-profile/:userId", async (req, res) => {
+app.put('/update-profile/:userId', async (req, res) => {
   try {
-    console.log(req.body);
+    console.log(req.body)
     const userId = req.params.userId;
-    const { firstName, lastName, phoneNumber, address } = req.body;
+    const {
+      firstName,
+      lastName,
+      phoneNumber,
+      address,
+    } = req.body;
 
     // Check if the user ID is valid
     if (!mongoose.Types.ObjectId.isValid(userId)) {
-      return res.status(400).json({ error: "Invalid user ID" });
+      return res.status(400).json({ error: 'Invalid user ID' });
     }
 
     // Initialize an empty update object
@@ -494,7 +459,7 @@ app.put("/update-profile/:userId", async (req, res) => {
       updateFields.address = address;
     }
 
-    console.log(updateFields);
+    console.log(updateFields)
     // Find the user by ID and update the specified fields
     const updatedUser = await User.findByIdAndUpdate(
       userId,
@@ -506,7 +471,7 @@ app.put("/update-profile/:userId", async (req, res) => {
 
     // Check if the user was found and updated
     if (!updatedUser) {
-      return res.status(404).json({ error: "User not found" });
+      return res.status(404).json({ error: 'User not found' });
     }
 
     res.status(200).json(updatedUser);
@@ -515,7 +480,8 @@ app.put("/update-profile/:userId", async (req, res) => {
   }
 });
 
-app.post("/post-repair", upload.single("repairImage"), async (req, res) => {
+
+app.post('/post-repair', upload.single('repairImage'), async (req, res) => {
   console.log(req.body);
   try {
     const { name, address, description, tel, status, userId } = req.body;
@@ -535,7 +501,7 @@ app.post("/post-repair", upload.single("repairImage"), async (req, res) => {
 
     const savedRepair = await newRepair.save();
     res.status(201).json({
-      message: "Repair created successfully",
+      message: 'Repair created successfully',
       product: savedRepair, // Include the entire product object in the response
     });
   } catch (error) {
@@ -543,7 +509,8 @@ app.post("/post-repair", upload.single("repairImage"), async (req, res) => {
   }
 });
 
-app.get("/get-offers/:userId", async (req, res) => {
+
+app.get('/get-offers/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
@@ -557,7 +524,7 @@ app.get("/get-offers/:userId", async (req, res) => {
   }
 });
 
-app.get("/get-payments/:userId", async (req, res) => {
+app.get('/get-payments/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
@@ -570,7 +537,7 @@ app.get("/get-payments/:userId", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.get("/get-repairs/:userId", async (req, res) => {
+app.get('/get-repairs/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
 
@@ -584,7 +551,8 @@ app.get("/get-repairs/:userId", async (req, res) => {
   }
 });
 
-app.get("/get-payment/:id", async (req, res) => {
+
+app.get('/get-payment/:id', async (req, res) => {
   try {
     const paymentId = req.params.id;
 
@@ -593,7 +561,7 @@ app.get("/get-payment/:id", async (req, res) => {
 
     // Check if the payment with the given ID exists
     if (!payment) {
-      return res.status(404).json({ message: "payment not found" });
+      return res.status(404).json({ message: 'payment not found' });
     }
 
     // Send the payment in the response
@@ -603,16 +571,16 @@ app.get("/get-payment/:id", async (req, res) => {
     res.status(500).json({ error: error.message });
   }
 });
-app.get("/get-payments", async (req, res) => {
+app.get('/get-payment/:id', async (req, res) => {
   try {
     const paymentId = req.params.id;
 
     // Fetch the product from the database by ID
-    const payment = await Payment.find()
+    const payment = await Payment.findById(paymentId);
 
     // Check if the payment with the given ID exists
     if (!payment) {
-      return res.status(404).json({ message: "payment not found" });
+      return res.status(404).json({ message: 'payment not found' });
     }
 
     // Send the payment in the response
@@ -623,7 +591,7 @@ app.get("/get-payments", async (req, res) => {
   }
 });
 
-app.get("/get-offer/:id", async (req, res) => {
+app.get('/get-offer/:id', async (req, res) => {
   try {
     const offerId = req.params.id;
 
@@ -632,7 +600,7 @@ app.get("/get-offer/:id", async (req, res) => {
 
     // Check if the offer with the given ID exists
     if (!offer) {
-      return res.status(404).json({ message: "offer not found" });
+      return res.status(404).json({ message: 'offer not found' });
     }
 
     // Send the offer in the response
@@ -643,24 +611,8 @@ app.get("/get-offer/:id", async (req, res) => {
   }
 });
 
-app.get("/get-repair", async (req, res) => {
-  try {
-    // Fetch all products from the database
-    const repairs = await Repair.find();
 
-    // Check if there are no products
-    if (repairs.length === 0) {
-      return res.status(404).json({ message: "No repair found" });
-    }
-
-    // Send the array of products in the response
-    res.status(200).json({ repairs });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/get-repair/:id", async (req, res) => {
+app.get('/get-repair/:id', async (req, res) => {
   try {
     const repairId = req.params.id;
 
@@ -669,7 +621,7 @@ app.get("/get-repair/:id", async (req, res) => {
 
     // Check if the repair with the given ID exists
     if (!repair) {
-      return res.status(404).json({ message: "repair not found" });
+      return res.status(404).json({ message: 'repair not found' });
     }
 
     // Send the repair in the response
@@ -680,42 +632,9 @@ app.get("/get-repair/:id", async (req, res) => {
   }
 });
 
-app.get("/get-user/:id", async (req, res) => {
-  try {
-    const userId = req.params.id;
 
-    // Fetch the product from the database by ID
-    const user = await User.findById(userId);
 
-    // Check if the user with the given ID exists
-    if (!user) {
-      return res.status(404).json({ message: "user not found" });
-    }
 
-    // Send the user in the response
-    res.status(200).json({ user });
-  } catch (error) {
-    // Handle errors
-    res.status(500).json({ error: error.message });
-  }
-});
-
-app.get("/get-offer", async (req, res) => {
-  try {
-    // Fetch all offer from the database
-    const offers = await Offer.find();
-
-    // Check if there are no offer
-    if (offers.length === 0) {
-      return res.status(404).json({ message: "No Offer found" });
-    }
-
-    // Send the array of offer in the response
-    res.status(200).json({ offers });
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
 
 // Start the server
 app.listen(PORT, () => {
