@@ -2,7 +2,7 @@ FROM node:18-alpine
 
 WORKDIR /react-vite-app
 
-EXPOSE 8080
+EXPOSE 8081
 
 COPY package.json package-lock.json ./
 
