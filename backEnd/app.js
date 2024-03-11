@@ -1,6 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
-const bcrypt = require('bcrypt');
+const argon2 = require('argon2');
 const path = require('path');
 
 const multer = require('multer');
@@ -19,11 +19,13 @@ app.use('/uploads', express.static('uploads'));
 
 app.use(express.urlencoded({ extended: true }));
 app.use(cors())
+
 // Connect to MongoDB Atlas
 mongoose.connect('mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/', {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
+
 app.use('/uploads', express.static('uploads'));
 const storage = multer.diskStorage({
   destination: './uploads/',
@@ -50,7 +52,7 @@ app.post('/login', async (req, res) => {
     }
 
     // Compare the entered password with the hashed password in the database
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await argon2.verify(user.password, password);
 
     if (!passwordMatch) { 
       return res.status(401).json({ error: 'Password Wrong', username:username });

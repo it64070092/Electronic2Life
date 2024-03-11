@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+    environment {
+        // Define variables
+        DOCKER_CREDENTIALS = credentials('dockerhub')
+    }
+
+
+    stages {
+        stage('Check Docker') {
+            steps {
+                script {
+                    def dockerExists = sh(script: 'docker --version', returnStatus: true) == 0
+                    if (!dockerExists) {
+                        sh 'curl -fsSL https://get.docker.com | sh'
+                    }
+                }
+            }
+        }
+
+        stage('Check Docker Compose') {
+            steps {
+                script {
+                    def dockerComposeExists = sh(script: 'docker-compose --version', returnStatus: true) == 0
+                    if (!dockerComposeExists) {
+                        sh 'sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose'
+                        sh 'sudo chmod +x /usr/local/bin/docker-compose'
+                    }
+                }
+            }
+        }
+
+        stage('Build and Push Docker Images') {
+                    steps {
+                        // Backend container
+                        dir('./Electronic2Life/backEnd') {
+                            script {
+                                // Define Docker image name
+                                def backendImage = 'it64070092/electronic2life-backend-1:latest'
+
+                                // Build the Docker image
+                                sh 'docker build -t $backendImage .'
+
+                                // Login to Docker Hub
+                                sh "docker login -u ${DOCKER_CREDENTIALS_USR} -p ${DOCKER_CREDENTIALS_PSW}"
+
+                                // Push the Docker image to Docker Hub
+                                sh "docker push $backendImage"
+                            }
+                        }
+
+                        // Frontend container
+                        dir('./Electronic2Life/frontEnd') {
+                            script {
+                                // Define Docker image name
+                                def frontendImage = 'it64070092/electronic2life-frontend-1:latest'
+
+                                // Build the Docker image
+                                sh 'docker build -t $frontendImage .'
+
+                                // Push the Docker image to Docker Hub
+                                sh "docker push $frontendImage"
+                            }
+                        }
+                    }
+                }
+
+                stage('Deploy') {
+                    steps {
+                        // Pull the Docker images from Docker Hub and run the containers using docker-compose
+                        dir('./Electronic2Life') {
+                            script {
+                                // Pull Docker images from Docker Hub
+                                sh 'docker-compose pull'
+
+                                // Run Docker containers using docker-compose
+                                sh 'docker-compose up -d  --build'
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
