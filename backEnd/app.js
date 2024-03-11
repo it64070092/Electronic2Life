@@ -510,6 +510,46 @@ app.post('/post-repair', upload.single('repairImage'), async (req, res) => {
 });
 
 
+app.get('/get-offers/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch all offers associated with the user ID
+    const userOffers = await Offer.find({ userId });
+
+    // Send the array of offers in the response
+    res.status(200).json({ offers: userOffers });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/get-payments/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch all payments associated with the user ID
+    const userPayments = await Payment.find({ userId });
+
+    // Send the array of payments in the response
+    res.status(200).json({ payments: userPayments });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get('/get-repairs/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+
+    // Fetch all repairs associated with the user ID
+    const userRepairs = await Repair.find({ userId });
+
+    // Send the array of repairs in the response
+    res.status(200).json({ repairs: userRepairs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 // Start the server
 app.listen(PORT, () => {
