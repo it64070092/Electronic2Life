@@ -146,14 +146,14 @@ export function ComplexNavbar() {
       onclick:"product"
     },
     {
-      label: "Blocks",
-      icon: CubeTransparentIcon,
-      onclick:"product"
+      label: "เสนอขายเครื่องใช้ไฟฟ้าเก่า",
+      icon: Square3Stack3DIcon,
+      onclick:"sellrequest"
     },
     {
-      label: "Docs",
-      icon: CodeBracketSquareIcon,
-      onclick:"/"
+      label: "ส่งซ่อมเครื่องใช้ไฟฟ้า",
+      icon: Square3Stack3DIcon,
+      onclick:"fixrequest"
     },
   ];
 
