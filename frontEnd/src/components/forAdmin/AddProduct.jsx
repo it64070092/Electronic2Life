@@ -30,7 +30,8 @@ const AddProductForm = () => {
     formDataToSend.append('price', formData.price);
     formDataToSend.append('description', formData.description);
     formDataToSend.append('productImage', formData.image);
-    
+    console.log(formData)
+    console.log(formDataToSend)
     try {
       const response = await axios.post('http://' + backendip + ':3000/post-product', formDataToSend, {
         headers: {

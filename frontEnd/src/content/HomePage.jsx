@@ -9,7 +9,7 @@ function HomePage() {
 
     return (
         <>
-           <ComplexNavbar/>
+       
             <section>
             <Carousel autoPlay={true} interval={5000} infiniteLoop={true} showArrows={false}  showStatus={false}>
             <div className="bg-[#C1C4B4] py-8 flex flex-col lg:flex-row items-center justify-center">
