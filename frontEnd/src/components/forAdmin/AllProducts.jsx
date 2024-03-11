@@ -170,10 +170,14 @@ const AllProducts = () => {
         <thead className="text-xs text-gray-700 uppercase bg-gray-50">
           <tr>
             <th scope="col" class="px-6 py-3 cursor-pointer" onClick={() => handleSort('name')}>
-              Product
+              Product Name
               {sortColumn === 'name' && (
                 <span>{sortDirection === 'asc' ? ' ▲' : ' ▼'}</span>
               )}
+            </th>
+            <th scope="col" class="px-6 py-3 cursor-pointer" onClick={() => handleSort('name')}>
+              Description
+
             </th>
             <th scope="col" class="px-6 py-3 cursor-pointer" onClick={() => handleSort('price')}>
               Price
@@ -203,6 +207,18 @@ const AllProducts = () => {
                   />
                 ) : (
                   product.name
+                )}
+              </td>
+              <td className="px-6 py-4 font-semibold">
+                {editProductId === product._id ? (
+                  <input
+                    type="text"
+                    value={editedDescription}
+                    onChange={e => setEditedDescription(e.target.value)}
+                    className="border border-gray-300 rounded-md px-2 py-1"
+                  />
+                ) : (
+                  product.description
                 )}
               </td>
               <td className="px-6 py-4 font-semibold">

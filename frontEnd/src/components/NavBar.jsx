@@ -243,14 +243,14 @@ export function ComplexNavbar() {
     dispatch(logoutUser())
   }
   return (
-    <Navbar className="mx-auto max-w-screen-3xl p-2 lg:rounded-full lg:pl-6 text-black">
+    <Navbar className="mx-auto max-w-screen-3xl p-2  lg:pl-6 text-black">
       <div className="relative mx-auto flex items-center justify-between text-blue-gray-900">
         <Typography
           as="a"
           href="/"
           className="mr-4 ml-2 cursor-pointer py-1.5 font-medium"
         >
-          Electronic2lif
+          Electronic2Life
         </Typography>
         <div className="hidden lg:block">
           <NavList />
