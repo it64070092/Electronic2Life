@@ -45,7 +45,7 @@ pipeline {
                                 sh 'docker build -t $BACKEND_IMAGE .'
                     
                                 // Login to Docker Hub
-                                sh "docker login --username ${DOCKER_CREDENTIALS_USR} --password-stdin"
+                                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
 
                                 // Push the Docker image to Docker Hub
                                 sh "docker push $BACKEND_IMAGE"
@@ -59,6 +59,8 @@ pipeline {
                                 // Build the Docker image
                                 sh 'docker build -t $FRONTEND_IMAGE .'
 
+                                sh 'echo $DOCKER_CREDENTIALS_PSW | docker login --username $DOCKER_CREDENTIALS_USR --password-stdin'
+
                                 // Push the Docker image to Docker Hub
                                 sh "docker push $FRONTEND_IMAGE"
                             }
@@ -69,7 +71,7 @@ pipeline {
         stage('Deploy') {
                     steps {
                         // Pull the Docker images from Docker Hub and run the containers using docker-compose
-                        dir('./Electronic2Life') {
+                        dir('./') {
                             script {
                                 // Pull Docker images from Docker Hub
                                 sh 'docker-compose pull'
