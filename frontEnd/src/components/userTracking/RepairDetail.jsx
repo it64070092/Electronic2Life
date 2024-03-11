@@ -51,14 +51,14 @@ const RepairDetail = ({ productId, onBack }) => {
         <div className="mx-auto flex justify-center">
           <ol className="relative border-s border-gray-200 dark:border-gray-200 dark:text-gray-800">
             <li className="mb-10 ms-6">
-              <span className={`absolute flex items-center justify-center w-8 h-8 ${['รอการตรวจสอบ', 'เดินทาง', "ซ่อม", 'ส่งคืน', 'เสร็จสิ้น'].includes(repairDetail.status) ? 'bg-green-300 ring-green-300' : 'bg-gray-400 ring-gray-400'} rounded-full -start-4 ring-4  `}>
+              <span className={`absolute flex items-center justify-center w-8 h-8 ${['ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ','รอการตรวจสอบ', 'เดินทาง', "ซ่อม", 'ส่งคืน', 'เสร็จสิ้น'].includes(repairDetail.status) ? 'bg-green-300 ring-green-300' : 'bg-gray-400 ring-gray-400'} rounded-full -start-4 ring-4  `}>
                 1
               </span>
               <h3 className="font-medium leading-tight">ส่งรายละเอียด</h3>
               <p className="text-sm">ทำการส่งรายละเอียดเครื่องใช้ไฟฟ้าที่จะใช้บริการซ่อม</p>
             </li>
             <li className="mb-10 ms-6">
-              <span className={`absolute flex items-center justify-center w-8 h-8 ${['รอการตรวจสอบ', 'เดินทาง', "ซ่อม", 'ส่งคืน', 'เสร็จสิ้น'].includes(repairDetail.status) ? 'bg-green-300 ring-green-300' : 'bg-gray-400 ring-gray-400'} rounded-full -start-4 ring-4  `}>
+            <span className={`absolute flex items-center justify-center w-8 h-8 ${repairDetail.status === 'ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ' ? 'bg-red-400 ring-red-400' : 'bg-gray-400 ring-gray-400'} ${['รอการตรวจสอบ', 'เดินทาง', "ซ่อม", 'ส่งคืน', 'เสร็จสิ้น'].includes(repairDetail.status) ? 'bg-green-300 ring-green-300' : ''} rounded-full -start-4 ring-4  `}>
                 2
               </span>
               <h3 className="font-medium leading-tight">รอการตรวจสอบ</h3>

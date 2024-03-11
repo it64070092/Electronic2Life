@@ -76,7 +76,7 @@ function FixRequest() {
 
     return (
         <>
-            <ComplexNavbar />
+       
             <div className="flex justify-center items-center">
 
                 <div className="w-full pt-10 pl-20 pr-20">
@@ -136,7 +136,7 @@ function FixRequest() {
     
 </div>
                     <div className='text-center'>
-                        <h2 className="text-2xl font-semibold mb-4">บริการส่งซ่อมเครื่องใช้ไฟฟ้า</h2>
+                        <h2 className="text-2xl font-semibold mb-4 mt-20">บริการส่งซ่อมเครื่องใช้ไฟฟ้า</h2>
                         <p className="text-gray-600">กรุณากรอกรายละเอียดของสินค้าที่ต้องการซ่อมด้านล่าง โปรดตรวจสอบให้แน่ใจว่าข้อมูลที่กรอกถูกต้องและครบถ้วน</p>
                     </div>
                     <div className='mx-auto  text-center'>
