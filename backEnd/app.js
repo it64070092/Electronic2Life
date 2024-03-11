@@ -591,6 +591,51 @@ app.get('/get-payment/:id', async (req, res) => {
   }
 });
 
+app.get('/get-offer/:id', async (req, res) => {
+  try {
+    const offerId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const offer = await Offer.findById(offerId);
+
+    // Check if the offer with the given ID exists
+    if (!offer) {
+      return res.status(404).json({ message: 'offer not found' });
+    }
+
+    // Send the offer in the response
+    res.status(200).json({ offer });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+app.get('/get-repair/:id', async (req, res) => {
+  try {
+    const repairId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const repair = await Repair.findById(repairId);
+
+    // Check if the repair with the given ID exists
+    if (!repair) {
+      return res.status(404).json({ message: 'repair not found' });
+    }
+
+    // Send the repair in the response
+    res.status(200).json({ repair });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
+
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
