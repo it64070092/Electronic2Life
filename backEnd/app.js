@@ -551,6 +551,46 @@ app.get('/get-repairs/:userId', async (req, res) => {
   }
 });
 
+
+app.get('/get-payment/:id', async (req, res) => {
+  try {
+    const paymentId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const payment = await Payment.findById(paymentId);
+
+    // Check if the payment with the given ID exists
+    if (!payment) {
+      return res.status(404).json({ message: 'payment not found' });
+    }
+
+    // Send the payment in the response
+    res.status(200).json({ payment });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+app.get('/get-payment/:id', async (req, res) => {
+  try {
+    const paymentId = req.params.id;
+
+    // Fetch the product from the database by ID
+    const payment = await Payment.findById(paymentId);
+
+    // Check if the payment with the given ID exists
+    if (!payment) {
+      return res.status(404).json({ message: 'payment not found' });
+    }
+
+    // Send the payment in the response
+    res.status(200).json({ payment });
+  } catch (error) {
+    // Handle errors
+    res.status(500).json({ error: error.message });
+  }
+});
+
 // Start the server
 app.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
