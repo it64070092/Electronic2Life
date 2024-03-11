@@ -611,6 +611,22 @@ app.get('/get-offer/:id', async (req, res) => {
   }
 });
 
+app.get('/get-repair', async (req, res) => {
+  try {
+    // Fetch all products from the database
+    const repairs = await Repair.find();
+
+    // Check if there are no products
+    if (repairs.length === 0) {
+      return res.status(404).json({ message: 'No repair found' });
+    }
+
+    // Send the array of products in the response
+    res.status(200).json({ repairs });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 app.get('/get-repair/:id', async (req, res) => {
   try {
