@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import AddProductForm from '../components/forAdmin/AddProduct';
 import AllProducts from '../components/forAdmin/AllProducts';
+import RepairOrder from '../components/forAdmin/RepairOrder';
+import Offer from '../components/forAdmin/Offer';
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('addProduct');
 
@@ -22,7 +24,13 @@ const AdminPage = () => {
           className={`p-4 cursor-pointer ${activeTab === 'order' ? 'bg-gray-200' : ''}`}
           onClick={() => handleTabClick('order')}
         >
-          Order
+          Repair Order
+        </div>
+        <div
+          className={`p-4 cursor-pointer ${activeTab === 'offer' ? 'bg-gray-200' : ''}`}
+          onClick={() => handleTabClick('offer')}
+        >
+          Offer
         </div>
         <div
           className={`p-4 cursor-pointer ${activeTab === 'products' ? 'bg-gray-200' : ''}`}
@@ -36,7 +44,8 @@ const AdminPage = () => {
       {/* Right side - Content area */}
       <div className="w-3/4 p-4">
         {activeTab === 'addProduct' && <AddProductForm />}
-        {activeTab === 'order' && <h1>ORDER PAGE</h1>}
+        {activeTab === 'order' && <RepairOrder />}
+        {activeTab === 'offer' && <Offer />} 
         {activeTab === 'products' && <AllProducts/>}
         {/* Add more content components for other tabs */}
       </div>
