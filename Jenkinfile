@@ -76,6 +76,9 @@ pipeline {
                                 // Pull Docker images from Docker Hub
                                 sh 'docker-compose pull'
 
+                                def IP = sh(script: 'dig +short myip.opendns.com @resolver1.opendns.com', returnStdout: true).trim()
+                                sh "sed -i \"s#const baseURL = .*#const baseURL = '$IP:3000';#\" frontEnd/backendip.js"
+                                
                                 // Run Docker containers using docker-compose
                                 sh 'docker-compose up -d  --build'
                             }
