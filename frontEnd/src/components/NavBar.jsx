@@ -143,14 +143,17 @@ export function ComplexNavbar() {
     {
       label: "สินค้ามือสอง",
       icon: UserCircleIcon,
+      onclick:"product"
     },
     {
       label: "Blocks",
       icon: CubeTransparentIcon,
+      onclick:"product"
     },
     {
       label: "Docs",
       icon: CodeBracketSquareIcon,
+      onclick:"/"
     },
   ];
 
@@ -177,7 +180,7 @@ export function ComplexNavbar() {
               </MenuItem>
             </Typography>
 
-            {navListItems.map(({ label, icon }, key) => (
+            {navListItems.map(({ label, icon, onclick}, key) => (
               <Typography
                 key={label}
                 as="a"
@@ -185,6 +188,7 @@ export function ComplexNavbar() {
                 variant="small"
                 color="gray"
                 className="font-medium text-blue-gray-500"
+                onClick={()=>{navigate(`/${onclick}`)}}
               >
                 <MenuItem className="flex items-center gap-2 lg:rounded-full">
                   {React.createElement(icon, { className: "h-[18px] w-[18px]" })}{" "}

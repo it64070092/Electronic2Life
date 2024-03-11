@@ -4,19 +4,6 @@
 body {
   background-color: #c1c4b4;
 }
-.steps {
-  list-style: none;
-  padding: 0;
-}
-
-.step {
-  margin-bottom: 16px;
-  padding: 8px 16px;
-  background-color: #f0f0f0;
-  border-radius: 4px;
-}
-
-.step.completed {
-  background-color: #4caf50;
-  color: white;
+.app{
+  height: 100%;
 }

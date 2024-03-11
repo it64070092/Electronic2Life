@@ -1,13 +1,13 @@
-import { useState } from 'react'
-import './App.css'
+import React from 'react';
 
-function Footer() {
-  const [count, setCount] = useState(0)
-
+const Footer = () => {
   return (
-    <nav>nav</nav>
-     
-  )
-}
+    <footer className="bg-gray-800 py-4">
+      <div className="container mx-auto text-center text-white">
+        <p className="text-sm">&copy; 2024 My Website. All Rights Reserved.</p>
+      </div>
+    </footer>
+  );
+};
 
-export default Footer
+export default Footer;

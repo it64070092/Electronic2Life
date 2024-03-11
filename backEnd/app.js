@@ -316,8 +316,8 @@ app.put('/update-offer/:offerId', async (req, res) => {
 app.post('/post-payment', upload.single('paymentImage'), async (req, res) => {
   try {
     // Ensure required fields are present
-    const { userId, productId, price, address, status } = req.body;
-    if (!userId || !productId || !price || !address || !status) {
+    const { userId, productId, address, status, tel,} = req.body;
+    if (!userId || !productId || !address || !status || !tel ) {
       return res.status(400).json({ error: 'Missing required fields' });
     }
 
@@ -327,10 +327,11 @@ app.post('/post-payment', upload.single('paymentImage'), async (req, res) => {
     const newPayment = new Payment({
       userId,
       productId,
-      price,
       status,
       address,
       paymentImage,
+      tel,
+    
     });
 
     const savedPayment = await newPayment.save();

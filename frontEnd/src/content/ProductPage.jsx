@@ -61,7 +61,7 @@ function ProductPage() {
           {/* <div class="flex flex-col w-1/3 h-[50%] pl-4 pt-4 bg-white rounded-lg shadow-lg overflow-hidden"> */}
           <div class="flex flex-col h-[70%] w-full md:w-1/3 bg-white rounded-lg shadow-lg overflow-hidden mb-4 md:mb-0">
             <div class="p-3">
-              <h2 class="text-lg font-semibold text-gray-800 mb-2">Product</h2>
+              <h2 class="text-lg font-semibold text-gray-800 mb-2">เครื่องใช้ไฟฟ้ามือสอง</h2>
               <div class="flex items-center mb-4">
                 <input
                   type="text"
@@ -106,7 +106,7 @@ function ProductPage() {
                 >
                   <img
                     class="w-full object-cover transition duration-300 transform hover:scale-105"
-                    src={product.productImage}
+                    src={`http://${backendip}:3000/uploads/${product.productImage}`}
                     alt="Image"
                   />
                 </div>
@@ -117,15 +117,13 @@ function ProductPage() {
                   </h>
                   <div class="flex justify-between mt-1">
                     <h class="text-gray-800 text-base font-medium truncate">
-                      ${product.price}
+                      ราคา {product.price} บาท
                     </h>
                     <h class="text-green-500 text-sm truncate mt-1">in stock</h>
                   </div>
                   <div class="flex justify-between mt-2">
-                    <button class="bg-black text-sm hover:bg-gray-700 text-white py-0 px-4 rounded">
-                      + Add To Cart
-                    </button>
-                    <Square3Stack3DIcon class="h-5 w-5 text-red-500 mr-2" />
+
+                
                   </div>
                 </div>
               </div>

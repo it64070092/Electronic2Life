@@ -14,12 +14,13 @@ import SellRequest from './content/SellRequest';
 import AddProductForm from './components/forAdmin/AddProduct';
 import Tracking from './content/Tracking';
 import { ComplexNavbar } from './components/NavBar';
+import Footer from './components/Footer';
 function App() {
 
 
   return (
     <Router>
-    <div className='App'>
+    <div className='App' style={{height:"100%"}}>
     <ComplexNavbar/>
       <Routes>
         <Route path='/' element={<HomePage />} />
@@ -35,7 +36,7 @@ function App() {
         <Route path='/addproduct' element={<AddProductForm/>}/>
         <Route path='/user/tracking' element={<Tracking/>}/>
       </Routes>
-    
+    <Footer/>
     </div>
   </Router>
   )
