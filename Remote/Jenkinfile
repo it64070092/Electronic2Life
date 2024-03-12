@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        /// It's good practice to keep sensitive or specific data like Docker images, remote hosts, and credentials out of the script for security and flexibility.
+        // It's good practice to keep sensitive or specific data like Docker images, remote hosts, and credentials out of the script for security and flexibility.
         DOCKER_BACKENDIMAGE = 'it64070092/electronic2life-backend-1:latest' // Ensure this Docker image name is correct and accessible.
         DOCKER_FRONTENDIMAGE = 'it64070092/electronic2life-frontend-1:latest'
 	REMOTE_HOST     = 'it64070092@34.125.184.47' // Replace with your actual username and remote IP.
