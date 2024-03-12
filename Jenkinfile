@@ -73,10 +73,9 @@ pipeline {
         stage('Deploy') {
                     steps {
                         /// Pull the Docker images from Docker Hub and run the containers using docker-compose
-                        dir('./') {
-                            script {
-                                sshagent([SSH_CREDENTIALS]) {
-
+                    sshagent([SSH_CREDENTIALS]) {    
+                            dir('./') {
+                                script {
                                     // Pull Docker images from Docker Hub
                                     sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker-compose pull'"
 
