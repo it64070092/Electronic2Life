@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import backendip from "../../../backendip";
-import axios from "axios";
+import Swal from 'sweetalert2';
 
 const RepairOrder = () => {
     const [repairs, setRepairs] = useState([]);
     const [editingRepairId, setEditingRepairId] = useState(null);
     const [editedStatus, setEditedStatus] = useState('');
     const [currentStatus, setCurrentStatus] = useState('all');
+    const [searchQuery, setSearchQuery] = useState('');
 
     // Function to fetch user by ID
     const getUserById = async (userId) => {
@@ -19,7 +21,6 @@ const RepairOrder = () => {
         }
     };
 
-    // Function to fetch repairs data
     useEffect(() => {
         const fetchData = async () => {
             try {
@@ -43,21 +44,35 @@ const RepairOrder = () => {
     // Function to handle status change
     const handleStatusChange = async (repairId, newStatus) => {
         try {
-          
-            await axios.put(`http://${backendip}:3000/update-repair/${repairId}`, { status: newStatus });
+            console.log("eee", newStatus)
         
-            setRepairs((prevRepairs) =>
-                prevRepairs.map((repair) =>
-                    repair._id === repairId ? { ...repair, status: newStatus } : repair
-                )
-            );
-            // Clear the editing state
+            const formData = new URLSearchParams();
+            formData.append('status', newStatus);
+            const response = await axios.put(`http://${backendip}:3000/update-repair/${repairId}`, formData, {
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded'
+                }
+            });
+            if (response.status === 200) {
+                setRepairs((prevRepairs) =>
+                    prevRepairs.map((repair) =>
+                        repair._id === repairId ? { ...repair, status: newStatus } : repair
+                    )
+                );
+                Swal.fire({
+                    icon: "success",
+                    title: "Update success",
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            }
             setEditingRepairId(null);
             setEditedStatus('');
         } catch (error) {
             console.error("Error updating repair status:", error);
         }
     };
+
 
     // Function to filter repairs by status
     const filteredRepairs = repairs.filter((repair) => {
@@ -67,85 +82,122 @@ const RepairOrder = () => {
         return repair.status === currentStatus;
     });
 
-    return (
-        <>
-            <div className='flex flex-col w-full h-full bg-white'>
-                <div className='flex flex-col w-full'>
-                    {/* Tab bar for filtering by status */}
-                    <div className="flex justify-center mb-4">
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('all')}
-                        >
-                            ทั้งหมด
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'รอการตรวจสอบ' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('รอการตรวจสอบ')}
-                        >
-                            รอการตรวจสอบ
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'เดินทาง' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('เดินทาง')}
-                        >
-                            เดินทาง
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ซ่อม' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('ซ่อม')}
-                        >
-                            ซ่อม
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ส่งคืน' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('ส่งคืน')}
-                        >
-                            ส่งคืน
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'เสร็จสิ้น' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('เสร็จสิ้น')}
-                        >
-                            เสร็จสิ้น
-                        </button>
-                        <button
-                            className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
-                            onClick={() => setCurrentStatus('ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ')}
-                        >
-                            ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ
-                        </button>
-                        {/* Add buttons for other statuses */}
-                    </div>
+    // Function to handle search input changes
+    const handleSearch = (e) => {
+        setSearchQuery(e.target.value);
+    };
 
-                    {/* Render filtered repairs */}
-                    {filteredRepairs.map((repair) => (
-                        <div className='flex flex-row justify-between border-b-2 border-solid border-black py-6 px-4' key={repair._id}>
-                            <div className='flex flex-col w-1/2 gap-2'>
-                                <p>จากผู้ใช้ : {repair.user?.firstName} {repair.user?.lastName}</p>
-                                <p>เบอร์โทร: {repair.tel} </p>
-                                <p>ที่อยู่: {repair.address}</p>
-                                <p>Name: {repair.name}</p>
-                                <p>รายละเอียด: {repair.description}</p>
-                                <p>{repair.repairImage}</p>
-                                {/* Render select dropdown for status */}
+    // Filter repairs based on search query
+    const searchedRepairs = filteredRepairs.filter((repair) =>
+        repair.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+
+    return (
+        <div className="relative overflow-x-auto shadow-md sm:rounded-lg">
+            <div className="flex justify-center mb-4">
+                {/* Tab bar for filtering by status */}
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'all' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('all')}
+                >
+                    ทั้งหมด
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'รอการตรวจสอบ' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('รอการตรวจสอบ')}
+                >
+                    รอการตรวจสอบ
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'เดินทาง' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('เดินทาง')}
+                >
+                    เดินทาง
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ซ่อม' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('ซ่อม')}
+                >
+                    ซ่อม
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ส่งคืน' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('ส่งคืน')}
+                >
+                    ส่งคืน
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'เสร็จสิ้น' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('เสร็จสิ้น')}
+                >
+                    เสร็จสิ้น
+                </button>
+                <button
+                    className={`px-4 py-2 mx-2 rounded-md ${currentStatus === 'ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ' ? 'bg-blue-500 text-white' : 'bg-gray-200 text-gray-700'}`}
+                    onClick={() => setCurrentStatus('ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ')}
+                >
+                    ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ
+                </button>
+                {/* Add buttons for other statuses */}
+            </div>
+            {/* Search Input */}
+            <div className="mt-4 mb-2 mx-2">
+                <input
+                    type="text"
+                    placeholder="Search by product name"
+                    value={searchQuery}
+                    onChange={handleSearch}
+                    className="border border-gray-300 rounded-md px-3 py-2 w-full"
+                />
+            </div>
+            <table className="w-full text-sm text-left text-gray-500 bg-white">
+                <thead className="text-xs text-gray-700 uppercase bg-gray-50">
+                    <tr>
+                        <th scope="col" className="px-6 py-3">User</th>
+                        <th scope="col" className="px-6 py-3">Tel</th>
+                        <th scope="col" className="px-6 py-3">Address</th>
+                        <th scope="col" className="px-6 py-3">Name</th>
+                        <th scope="col" className="px-6 py-3">Description</th>
+                        <th scope="col" className="px-6 py-3">Image</th> {/* Add Image column */}
+                        <th scope="col" className="px-6 py-3">Status</th>
+                        <th scope="col" className="px-6 py-3">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {searchedRepairs.map((repair) => (
+                        <tr key={repair._id} className="bg-white border-b hover:bg-gray-50">
+                            <td className="px-6 py-4">{repair.user?.firstName} {repair.user?.lastName}</td>
+                            <td className="px-6 py-4">{repair.tel}</td>
+                            <td className="px-6 py-4">{repair.address}</td>
+                            <td className="px-6 py-4">{repair.name}</td>
+                            <td className="px-6 py-4">{repair.description}</td>
+                            <td className="px-6 py-4"> {/* Add Image column */}
+                                <img src={`http://${backendip}:3000/uploads/${repair.repairImage}`} className="w-16 md:w-32 max-w-full max-h-full" alt="Repair" />
+                            </td>
+                            <td className="px-6 py-4">
                                 {editingRepairId === repair._id ? (
-                                    <div className="flex gap-2">
-                                        <select
-                                            value={editedStatus}
-                                            onChange={(e) => setEditedStatus(e.target.value)}
-                                            className="border border-gray-300 rounded-lg px-3 py-1"
-                                        >
-                                            <option value="รอการตรวจสอบ">รอการตรวจสอบ</option>
-                                            <option value="เดินทาง">เดินทาง</option>
-                                            <option value="ซ่อม">ซ่อม</option>
-                                            <option value="ส่งคืน">ส่งคืน</option>
-                                            <option value="เสร็จสิ้น">เสร็จสิ้น</option>
-                                            <option value="ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ">ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ</option>
-                                        </select>
+                                    <select
+                                        value={editedStatus}
+                                        onChange={(e) => setEditedStatus(e.target.value)}
+                                        className="border border-gray-300 rounded-lg px-3 py-1"
+                                    >
+                                        <option value="รอการตรวจสอบ">รอการตรวจสอบ</option>
+                                        <option value="เดินทาง">เดินทาง</option>
+                                        <option value="ซ่อม">ซ่อม</option>
+                                        <option value="ส่งคืน">ส่งคืน</option>
+                                        <option value="เสร็จสิ้น">เสร็จสิ้น</option>
+                                        <option value="ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ">ไม่อนุมัติเนื่องจากไม่อยู่ในเขตให้บริการ</option>
+                                    </select>
+                                ) : (
+                                    repair.status
+                                )}
+                            </td>
+                            <td className="px-6 py-4">
+                                {editingRepairId === repair._id ? (
+                                    <>
                                         <button
                                             onClick={() => handleStatusChange(repair._id, editedStatus)}
-                                            className="px-3 py-1 bg-green-500 text-white rounded-md"
+                                            className="px-3 py-1 bg-green-500 text-white rounded-md mr-2"
                                         >
                                             Save
                                         </button>
@@ -158,30 +210,23 @@ const RepairOrder = () => {
                                         >
                                             Cancel
                                         </button>
-                                    </div>
+                                    </>
                                 ) : (
-                                    <div>
-                                        <p>สถานะ: {repair.status}</p>
-                                        <button
-                                            onClick={() => {
-                                                setEditingRepairId(repair._id);
-                                                setEditedStatus(repair.status);
-                                            }}
-                                            className="px-3 py-1 bg-blue-500 text-white rounded-md"
-                                        >
-                                            Edit
-                                        </button>
-                                    </div>
+                                    <button
+                                        onClick={() => setEditingRepairId(repair._id)}
+                                        className="px-3 py-1 bg-blue-500 text-white rounded-md"
+                                    >
+                                        Edit
+                                    </button>
                                 )}
-                            </div>
-                            <img src={`http://${backendip}:3000/uploads/${repair.repairImage}`} className='w-40 h-40' />
-
-                        </div>
+                            </td>
+                        </tr>
                     ))}
-                </div>
-            </div>
-        </>
-    )
-}
+                </tbody>
+            </table>
+
+        </div>
+    );
+};
 
 export default RepairOrder;

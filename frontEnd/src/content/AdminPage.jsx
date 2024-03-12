@@ -3,6 +3,7 @@ import AddProductForm from '../components/forAdmin/AddProduct';
 import AllProducts from '../components/forAdmin/AllProducts';
 import RepairOrder from '../components/forAdmin/RepairOrder';
 import Offer from '../components/forAdmin/Offer';
+import Payment from '../components/forAdmin/Payment';
 const AdminPage = () => {
   const [activeTab, setActiveTab] = useState('addProduct');
 
@@ -18,25 +19,31 @@ const AdminPage = () => {
           className={`p-4 cursor-pointer ${activeTab === 'addProduct' ? 'bg-gray-200' : ''}`}
           onClick={() => handleTabClick('addProduct')}
         >
-          Add Product
+          เพิ่มสินค้า
         </div>
         <div
           className={`p-4 cursor-pointer ${activeTab === 'order' ? 'bg-gray-200' : ''}`}
           onClick={() => handleTabClick('order')}
         >
-          Repair Order
+          บริการส่งซ่อม
         </div>
         <div
           className={`p-4 cursor-pointer ${activeTab === 'offer' ? 'bg-gray-200' : ''}`}
           onClick={() => handleTabClick('offer')}
         >
-          Offer
+          บริการเสนอขาย
         </div>
         <div
           className={`p-4 cursor-pointer ${activeTab === 'products' ? 'bg-gray-200' : ''}`}
           onClick={() => handleTabClick('products')}
         >
-          Products
+          สินค้า
+        </div>
+        <div
+          className={`p-4 cursor-pointer ${activeTab === 'payment' ? 'bg-gray-200' : ''}`}
+          onClick={() => handleTabClick('payment')}
+        >
+        ซื้อสินค้ามือสอง
         </div>
        
         {/* Add more tabs here if needed */}
@@ -47,6 +54,7 @@ const AdminPage = () => {
         {activeTab === 'order' && <RepairOrder />}
         {activeTab === 'offer' && <Offer />} 
         {activeTab === 'products' && <AllProducts/>}
+        {activeTab === 'payment' && <Payment/>}
         {/* Add more content components for other tabs */}
       </div>
     </div>
