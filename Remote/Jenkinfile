@@ -28,8 +28,8 @@ pipeline {
                     sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker stop \$(docker ps -a -q) || true'"
                     sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker rm \$(docker ps -a -q) || true'"
                     sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker rmi \$(docker images -q) || true'"
-                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker run -d --name it64070092/electronic2life-backend-1:latest -p 3000:3000 $DOCKER_BACKENDIMAGE'"
-                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker run -d --name it64070092/electronic2life-backend-1:latest -p 8081:8081 $DOCKER_FRONTENDIMAGE'"
+                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker run -d --name it64070092/electronic2life-backend-1-latest -p 3000:3000 $DOCKER_BACKENDIMAGE'"
+                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker run -d --name it64070092/electronic2life-backend-1-latest -p 8081:8081 $DOCKER_FRONTENDIMAGE'"
 		    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker ps -a'"
                 }
             }
