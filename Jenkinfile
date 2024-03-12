@@ -72,7 +72,7 @@ pipeline {
 
         stage('Deploy') {
                     steps {
-                        // Pull the Docker images from Docker Hub and run the containers using docker-compose
+                        /// Pull the Docker images from Docker Hub and run the containers using docker-compose
                         dir('./') {
                             script {
                                 sshagent([SSH_CREDENTIALS]) {
