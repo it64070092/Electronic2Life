@@ -73,18 +73,17 @@ pipeline {
         stage('Deploy') {
                     steps {
                         /// Pull the Docker images from Docker Hub and run the containers using docker-compose
-                    sshagent([SSH_CREDENTIALS]) {    
-                            dir('./') {
-                                script {
+                        dir('./') {
+                            script {
                                     // Pull Docker images from Docker Hub
-                                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker-compose pull'"
+                                    sh 'docker-compose pull'
 
                                     def IP = sh(script: 'dig +short myip.opendns.com @resolver1.opendns.com', returnStdout: true).trim()
-                                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST sed -i \"s#const backendip = .*#const backendip = '$IP';#\" frontEnd/backendip.js"
+                                    sh "sed -i \"s#const backendip = .*#const backendip = '$IP';#\" frontEnd/backendip.js"
                                 
                                     // Run Docker containers using docker-compose
-                                    sh "ssh -o StrictHostKeyChecking=no $REMOTE_HOST 'docker-compose up -d  --build'"
-                                }
+                                    sh 'docker-compose up -d  --build'
+                                
                             }
                         }
                     }
