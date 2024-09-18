@@ -27,6 +27,7 @@ mongoose.connect(
 
 
 app.use("/uploads", express.static("uploads"));
+
 const storage = multer.diskStorage({
   destination: "./uploads/",
   filename: function (req, file, cb) {
