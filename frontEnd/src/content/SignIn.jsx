@@ -20,30 +20,36 @@ function SignIn() {
     setPassword(event.target.value)
   }
   const handleSignIn = async () => {
-    const userData = { username, password };
+    const userData = new URLSearchParams();
+    userData.append('username', username);
+    userData.append('password', password);
+
     try {
       const response = await axios.post('http://'+backendip+':3000/login', userData, {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'
-        }
+        },
+	timeout: 10000
       })
       if (response.status === 200) { // Checking the status code for success
         console.log("Login Success");
-        dispatch(loginUser(response.data)); // Dispatching loginUser action with response data
+        console.log(response.data);
+	dispatch(loginUser(response.data)); // Dispatching loginUser action with response data
         console.log(user)
         console.log("eiei")
         navigate('/')
       } else if (response.status === 401) {
         console.eror(response.data.error);
+        alert(response.data.error);
       }
-    } catch (error) {
-      alert(error.response.data.error)
-
-    }
-
-
-
-  }
+     } catch (error) {
+        if (error.response && error.response.data && error.response.data.details) {
+        alert(error.response.data.details); // Show the detailed error message
+        } else {
+        alert("An unexpected error occurred");
+        }
+     }
+  } 
 
   return (
     <div className="bg-[#a6b09d] flex justify-end h-screen w-screen">

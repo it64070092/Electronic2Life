@@ -1,2 +1,2 @@
-const backendip = "34.125.184.47";
+const backendip = "10.111.0.41";
 export default backendip
