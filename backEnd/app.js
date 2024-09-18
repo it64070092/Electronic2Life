@@ -1,7 +1,8 @@
+var elastic = require("./elastic-apm");
 const express = require("express");
 const mongoose = require("mongoose");
-const bcrypt = require("bcrypt");
-const path = require("path");
+const bcrypt = require("bcryptjs");
+const path = require("path")
 
 const multer = require("multer");
 const User = require("./models/user"); // Check the path
@@ -22,11 +23,9 @@ app.use(cors());
 // Connect to MongoDB Atlas
 mongoose.connect(
   "mongodb+srv://elec2life:test12345@electronic2life.etmvjkw.mongodb.net/",
-  {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  }
 );
+
+
 app.use("/uploads", express.static("uploads"));
 const storage = multer.diskStorage({
   destination: "./uploads/",
@@ -42,34 +41,44 @@ const upload = multer({ storage: storage });
 app.get("/", (req, res) => {
   res.send("Hello MongoDB Atlas with Express.js!");
 });
+
+
 app.post("/login", async (req, res) => {
   try {
-    const { username, password } = req.body;
+    const { username, password: enteredPassword } = req.body;
+    console.log("Username:", username, "Password:", enteredPassword);
 
     // Find the user by username
     const user = await User.findOne({ username });
-    console.log(user);
+    console.log("User found:", user);
+
     // If the user doesn't exist, return an error
     if (!user) {
-      return res
-        .status(401)
-        .json({ error: "No User Name", username: username });
+      return res.status(401).json({ error: "No User Name", username: username });
     }
 
     // Compare the entered password with the hashed password in the database
-    const passwordMatch = await bcrypt.compare(password, user.password);
+    const passwordMatch = await bcrypt.compare(enteredPassword, user.password);
 
     if (!passwordMatch) {
-      return res
-        .status(401)
-        .json({ error: "Password Wrong", username: username });
+      return res.status(401).json({ error: "Password Wrong", username: username });
     }
-    res.status(200).json({ user });
-    // res.status(200).json({ message: 'Login successful Welcome ' + user.email});
+
+    // Remove sensitive fields like password
+    const { password: userPassword, ...userWithoutPassword } = user._doc;  // Rename the destructured 'password' to avoid conflict
+
+    // Log the success and send the filtered user object
+    console.log("Login successful");
+    return res.status(200).json({ user });
+
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("Login error:", error);  // Log the full error object for debugging
+    return res.status(500).json({ error: "An unexpected error occurred", details: error.message });
   }
 });
+
+
+
 // Register a new user
 app.post("/register", async (req, res) => {
   console.log(req.body);
