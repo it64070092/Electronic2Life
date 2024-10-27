@@ -7,8 +7,11 @@ elastic.start({
 
   serverUrl: 'http://10.111.0.32:8200',
 
-  environment: 'development'
+  environment: 'development',
 
+  captureBody: 'all',
+
+  logLevel: 'debug'
 });
 
 module.exports = elastic;

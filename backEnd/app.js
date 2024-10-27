@@ -1,4 +1,6 @@
 var elastic = require("./elastic-apm");
+
+var otel = require("./otel");
 const express = require("express");
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
@@ -43,42 +45,49 @@ app.get("/", (req, res) => {
   res.send("Hello MongoDB Atlas with Express.js!");
 });
 
-
 app.post("/login", async (req, res) => {
+  const transaction = elastic.startTransaction('User Login', 'request');
+  console.log('Transaction started for login');
+
   try {
     const { username, password: enteredPassword } = req.body;
-    console.log("Username:", username, "Password:", enteredPassword);
 
-    // Find the user by username
+    const findUserSpan = elastic.startSpan('Find User');
+    console.log('Find User span started');
     const user = await User.findOne({ username });
-    console.log("User found:", user);
+    if (findUserSpan) findUserSpan.end();
+    console.log('Find User span ended');
 
-    // If the user doesn't exist, return an error
     if (!user) {
-      return res.status(401).json({ error: "No User Name", username: username });
+      transaction.result = 'failure';
+      return res.status(401).json({ error: "No User Name", username });
     }
 
-    // Compare the entered password with the hashed password in the database
+    const comparePasswordSpan = elastic.startSpan('Compare Password');
+    console.log('Compare Password span started');
     const passwordMatch = await bcrypt.compare(enteredPassword, user.password);
+    if (comparePasswordSpan) comparePasswordSpan.end();
+    console.log('Compare Password span ended');
 
     if (!passwordMatch) {
-      return res.status(401).json({ error: "Password Wrong", username: username });
+      transaction.result = 'failure';
+      return res.status(401).json({ error: "Password Wrong", username });
     }
 
-    // Remove sensitive fields like password
-    const { password: userPassword, ...userWithoutPassword } = user._doc;  // Rename the destructured 'password' to avoid conflict
+    const { password, ...userWithoutPassword } = user._doc;
 
-    // Log the success and send the filtered user object
-    console.log("Login successful");
-    return res.status(200).json({ user });
-
+    transaction.result = 'success';
+    return res.status(200).json({ user: userWithoutPassword });
+    
   } catch (error) {
-    console.error("Login error:", error);  // Log the full error object for debugging
-    return res.status(500).json({ error: "An unexpected error occurred", details: error.message });
+    transaction.result = 'error';
+    console.error("Login error:", error);
+   return res.status(500).json({ error: "An unexpected error occurred", details: error.message });
+  } finally {
+    if (transaction) transaction.end();  // Ensure transaction ends
+    console.log('Transaction ended for login');
   }
 });
-
-
 
 // Register a new user
 app.post("/register", async (req, res) => {
