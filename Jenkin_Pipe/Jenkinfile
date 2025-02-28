@@ -1,0 +1,86 @@
+pipeline {
+    agent any
+
+
+    stages {
+        stage('Check Docker') {
+            steps {
+                script {
+                    def dockerExists = sh(script: 'docker --version', returnStatus: true) == 0
+                    if (!dockerExists) {
+                        echo 'Docker not found, installing...'
+                        sh 'curl -fsSL https://get.docker.com | sh'
+                    } else {
+                        sh 'docker info'
+                        echo 'Docker is already installed.'
+                    }
+                }
+            }
+        }
+
+        stage('Check Docker Compose') {
+            steps {
+                script {
+                    def dockerComposeExists = sh(script: 'docker compose version', returnStatus: true) == 0
+                    if (!dockerComposeExists) {
+                        echo 'Docker Compose not found, installing...'
+                        sh '''
+                            sudo curl -L "https://github.com/docker/compose/releases/download/1.29.2/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+                            sudo chmod +x /usr/local/bin/docker-compose
+                        '''
+                    } else {
+                        echo 'Docker Compose is already installed.'
+                    }
+                }
+            }
+        }
+
+        stage('Pull From Git') {
+            steps {
+                checkout scmGit(
+                    branches: [[name: '*/main']],
+                    extensions: [],
+                    userRemoteConfigs: [[credentialsId: 'github', url: 'https://github.com/it64070092/Electronic2Life.git']]
+                )
+            }
+        }
+
+        stage('Docker Component Prune') {
+            steps {
+                script {
+                    echo 'Cleaning Unused Docker Components...'
+                    sh 'docker system prune -af'
+                }
+            }
+        }
+
+        stage('Docker Compose') {
+            steps {
+                script {
+                    echo 'Building and starting containers using Docker Compose...'
+                    sh 'docker compose -f docker-compose.yml up --build -d'
+                }
+            }
+        }
+
+        stage('Success') {
+            steps {
+                echo 'Deployment completed successfully.'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Pipeline executed successfully.'
+        }
+        failure {
+            echo 'Pipeline failed.'
+        }
+        always {
+            sh 'docker logout'
+            cleanWs() // Clean workspace after the build
+        }
+    }
+}
+
