@@ -1,2 +1,2 @@
-const backendip = "10.111.0.41";
+const backendip = "localhost";
 export default backendip
